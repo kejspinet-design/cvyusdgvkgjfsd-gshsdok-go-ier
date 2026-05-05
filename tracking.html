@@ -7,12 +7,12 @@
     <link rel="icon" href="./9574.ico" type="image/x-icon">
     
     <!-- Google Fonts -->
-    <link rel="stylesheet" href="css/fonts.css?v=7">
+    <link rel="stylesheet" href="css/fonts.css?v=8">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/base.css?v=7">
-    <link rel="stylesheet" href="css/style.css?v=7">
-    <link rel="stylesheet" href="css/dashboard.css?v=7">
+    <link rel="stylesheet" href="css/base.css?v=8">
+    <link rel="stylesheet" href="css/style.css?v=8">
+    <link rel="stylesheet" href="css/dashboard.css?v=8">
     
     
     <style>
@@ -573,6 +573,7 @@
     
 
     <!-- JavaScript -->
+    <script src="js/NotificationSystem.js"></script>
     
     <script>
         // Tracking functionality
@@ -844,6 +845,11 @@
             localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
             input.value = '';
             
+            // Уведомляем систему уведомлений об изменении
+            if (window.notificationSystem) {
+                window.notificationSystem.updateTrackedPlayers();
+            }
+            
             // Render immediately
             await renderTrackedPlayers();
             
@@ -858,6 +864,12 @@
             if (confirm('Удалить этого игрока из отслеживания?')) {
                 trackedPlayers.splice(index, 1);
                 localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
+                
+                // Уведомляем систему уведомлений об изменении
+                if (window.notificationSystem) {
+                    window.notificationSystem.updateTrackedPlayers();
+                }
+                
                 renderTrackedPlayers();
             }
         }
