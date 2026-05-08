@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Отслеживание</title>
+    <link rel="icon" href="./9574.ico" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="css/fonts.css?v=8">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/ultra-premium-v2.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=8">
+    <link rel="stylesheet" href="css/dashboard.css?v=8">
+    <link rel="stylesheet" href="css/profile-dropdown.css?v=4">
+    
+    
+    <style>
+        /* Allow scroll and fix scroll issues */
+        body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            background: #1a1d29;
+        }
+        
+        .container {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+        }
+        
+        /* Animated Background */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .floating-dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(185, 28, 28, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .dot:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; animation-duration: 15s; }
+        .dot:nth-child(2) { left: 20%; top: 80%; animation-delay: 2s; animation-duration: 18s; }
+        .dot:nth-child(3) { left: 30%; top: 40%; animation-delay: 4s; animation-duration: 22s; }
+        .dot:nth-child(4) { left: 40%; top: 60%; animation-delay: 1s; animation-duration: 20s; }
+        .dot:nth-child(5) { left: 50%; top: 30%; animation-delay: 3s; animation-duration: 17s; }
+        .dot:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; animation-duration: 19s; }
+        .dot:nth-child(7) { left: 70%; top: 50%; animation-delay: 2.5s; animation-duration: 21s; }
+        .dot:nth-child(8) { left: 80%; top: 25%; animation-delay: 4.5s; animation-duration: 16s; }
+        .dot:nth-child(9) { left: 90%; top: 75%; animation-delay: 1.5s; animation-duration: 23s; }
+        .dot:nth-child(10) { left: 15%; top: 55%; animation-delay: 3.5s; animation-duration: 18s; }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(30px, -30px) scale(1.2);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-20px, 20px) scale(0.8);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate(20px, 30px) scale(1.1);
+                opacity: 0.5;
+            }
+        }
+        
+        .red-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(185, 28, 28, 0.15) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+        
+        /* HEADER OVERRIDE - FORCE STYLES */
+        .header {
+            background: rgba(10, 10, 15, 0.05) !important;
+            padding: 1.5rem 2.5rem !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            position: relative !important;
+            z-index: 100 !important;
+        }
+        
+        .header::before {
+            display: none !important;
+        }
+        
+        /* Navigation buttons - make clickable */
+        nav {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        nav a {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        nav a:hover:not([href*="discord"]):not([style*="linear-gradient"]) {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-2px);
+        }
+        
+        /* Profile button */
+        .profile-button {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        .profile-button:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-2px);
+        }
+        
+        .tracking-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .tracking-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .tracking-title {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+        
+        .tracking-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .add-player-section {
+            background: rgba(37, 40, 54, 0.8);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .add-player-form {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .tracking-input {
+            flex: 1;
+            padding: 18px 24px;
+            background: rgba(26, 29, 41, 0.9);
+            border: 2px solid rgba(185, 28, 28, 0.2);
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .tracking-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                0 0 0 4px rgba(185, 28, 28, 0.2),
+                0 8px 25px rgba(185, 28, 28, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .tracking-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .add-button {
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(185, 28, 28, 0.4);
+        }
+        
+        .add-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(185, 28, 28, 0.6);
+        }
+        
+        .tracked-players-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        @media (min-width: 1400px) {
+            .tracked-players-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 1800px) {
+            .tracked-players-list {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tracked-players-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .add-player-form {
+                flex-direction: column;
+            }
+        }
+        
+        .tracked-player-card {
+            background: rgba(37, 40, 54, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(185, 28, 28, 0.1);
+        }
+        
+        .tracked-player-card.has-reports {
+            background: rgba(185, 28, 28, 0.15);
+            border: 2px solid rgba(185, 28, 28, 0.6);
+            box-shadow: 0 6px 20px rgba(185, 28, 28, 0.4), 0 0 30px rgba(185, 28, 28, 0.2);
+        }
+        
+        .report-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+            z-index: 10;
+            animation: pulse-report 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-report {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(220, 38, 38, 0.8);
+            }
+        }
+        
+        .report-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .tracked-player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #b91c1c, #dc2626);
+        }
+        
+        .tracked-player-card:hover {
+            border-color: #dc2626;
+            box-shadow: 0 12px 30px rgba(185, 28, 28, 0.4), 0 6px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-6px);
+        }
+        
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(185, 28, 28, 0.2);
+        }
+        
+        .player-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            border: 2px solid #dc2626;
+            box-shadow: 0 0 20px rgba(185, 28, 28, 0.3);
+        }
+        
+        .player-info {
+            flex: 1;
+        }
+        
+        .player-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .player-steamid {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .player-status {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(20, 20, 20, 0.7);
+            border-radius: 12px;
+            border: 1px solid rgba(185, 28, 28, 0.25);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 8px;
+            background: rgba(26, 29, 41, 0.5);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .stat-box:hover {
+            background: rgba(26, 29, 41, 0.8);
+            transform: scale(1.05);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-value.kills {
+            color: #22c55e;
+        }
+        
+        .stat-value.deaths {
+            color: #ef4444;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-online {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+        
+        .status-offline {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
+            border: 1px solid rgba(107, 114, 128, 0.4);
+        }
+        
+        .status-server {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .player-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid rgba(185, 28, 28, 0.3);
+            border-radius: 8px;
+            background: rgba(185, 28, 28, 0.1);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            background: rgba(185, 28, 28, 0.2);
+            border-color: rgba(185, 28, 28, 0.5);
+            transform: translateY(-1px);
+        }
+        
+        .remove-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        
+        .remove-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            opacity: 0.4;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <!-- АНИМИРОВАННЫЙ ФОН -->
+    <div class="animated-background">
+        <div class="floating-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+    </div>
+    
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Header -->
+                <header class="header">
+            <div class="header-content" style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px;">
+                <!-- Left: Logo -->
+                <div class="logo-container" style="display: flex; align-items: center; gap: 12px;">
+                    <img src="./9574.ico" alt="Fear Protection" style="width: 44px; height: 44px;">
+                    <span class="logo-text" style="font-size: 24px; font-weight: 700; color: white;">Fear Protection</span>
+                </div>
+                
+                <!-- Center: Navigation -->
+                <nav style="display: flex; gap: 15px; align-items: center; justify-content: center;">
+                    <a href="anticheat.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Игроки</a>
+                    <a href="secret-admins.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Админы</a>
+                    <a href="check.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Проверка</a>
+                    <a href="rules.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Правила</a>
+                    <a href="tracking.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 2px solid #667eea; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">Отслеживание</a>
+                    <a href="https://discord.gg/hphRTbHCcb" target="_blank" style="background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%); border: 2px solid #5865F2; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(88, 101, 242, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(88, 101, 242, 0.4)'">
+                        <svg width="20" height="20" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+                        </svg>
+                        Fear Protection
+                    </a>
+                </nav>
+                
+                <!-- Right: Profile -->
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="button" class="profile-button" id="profile-button" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; color: white;">
+                        <div class="profile-info" style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span class="profile-name" id="profile-name" style="font-size: 13px; font-weight: 600; color: white;">Загрузка...</span>
+                            <span class="profile-role" id="profile-role" style="font-size: 11px; color: rgba(255, 255, 255, 0.5);">Админ</span>
+                        </div>
+                        <img src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg" 
+                             alt="Profile" 
+                             class="profile-avatar"
+                             id="profile-avatar"
+                             style="width: 36px; height: 36px; border-radius: 4px; border: 2px solid rgba(255, 255, 255, 0.1);">
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="check-main">
+            <div class="tracking-container">
+                <div class="tracking-header">
+                    <h1 class="tracking-title">Отслеживание игроков</h1>
+                    <p class="tracking-subtitle">Добавьте игроков для отслеживания их активности на серверах</p>
+                </div>
+                
+                <div class="add-player-section">
+                    <div class="add-player-form">
+                        <input 
+                            type="text" 
+                            id="trackingInput" 
+                            class="tracking-input" 
+                            placeholder="Введите Steam ID или ссылку на профиль..."
+                        >
+                        <button id="addButton" class="add-button">Добавить</button>
+                    </div>
+                </div>
+                
+                <div class="tracked-players-list" id="trackedPlayersList">
+                    <!-- Test card for automated testing -->
+                    <div class="tracked-player-card" id="test-card" data-test="true">
+                        <div class="player-header">
+                            <img src="./9574.ico" alt="Test" class="player-avatar">
+                            <div class="player-info">
+                                <div class="player-name">Test Player</div>
+                                <div class="player-steamid">76561198000000000</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p>Нет отслеживаемых игроков</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Добавьте игроков для отслеживания их активности</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    
+    
+    
+
+    <!-- JavaScript -->
+    <script src="js/AntiDevTools.js?v=1"></script>
+    <script src="js/AuthManager.js?v=18"></script>
+    <script src="js/RoleAccessControl.js?v=5"></script>
+    <script src="js/ProfileDropdown.js?v=3"></script>
+    <script src="js/NotificationSystem.js"></script>
+    <script src="js/PunishmentNormsWidget.js?v=1"></script>
+    
+    <script>
+        // Tracking functionality
+        let trackedPlayers = JSON.parse(localStorage.getItem('trackedPlayers') || '[]');
+        let serversData = [];
+        let reportsData = [];
+        
+        // Fetch reports data
+        async function fetchReports() {
+            try {
+                const response = await fetch('/api/reports');
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+                
+                const data = await response.json();
+                reportsData = Array.isArray(data) ? data : (data.reports || data.data || []);
+                console.log('[Tracking] Reports loaded:', reportsData.length);
+                
+                if (reportsData.length > 0) {
+                    console.log('[Tracking] Sample report:', reportsData[0]);
+                }
+                
+                return reportsData;
+            } catch (error) {
+                console.error('[Tracking] Error fetching reports:', error);
+                return [];
+            }
+        }
+        
+        // Check if player has reports
+        function getPlayerReports(steamId) {
+            console.log('[Tracking] Checking reports for Steam ID:', steamId);
+            console.log('[Tracking] Total reports:', reportsData.length);
+            
+            if (reportsData.length > 0) {
+                console.log('[Tracking] Sample report structure:', reportsData[0]);
+            }
+            
+            const reports = reportsData.filter(report => {
+                // Normalize Steam IDs (remove spaces and quotes)
+                const intruderSteamId = String(report.intruder_steamid || '').trim();
+                const checkSteamId = String(steamId).trim();
+                
+                const match = intruderSteamId === checkSteamId;
+                
+                if (match) {
+                    console.log('[Tracking] Found matching report:', report);
+                }
+                
+                return match;
+            });
+            
+            console.log('[Tracking] Found reports count:', reports.length);
+            return reports.length;
+        }
+        
+        // Extract Steam ID from various formats
+        function extractSteamId(input) {
+            input = input.trim();
+            
+            // Already a Steam ID
+            if (/^765\d{14}$/.test(input)) {
+                return input;
+            }
+            
+            // Steam profile URL
+            const profileMatch = input.match(/steamcommunity\.com\/profiles\/(\d+)/);
+            if (profileMatch) {
+                return profileMatch[1];
+            }
+            
+            // Steam ID URL
+            const idMatch = input.match(/steamcommunity\.com\/id\/([^\/]+)/);
+            if (idMatch) {
+                alert('Пожалуйста, используйте Steam ID (числовой) или ссылку на профиль с числовым ID');
+                return null;
+            }
+            
+            return input;
+        }
+        
+        // Fetch servers data
+        async function fetchServers() {
+            try {
+                const response = await fetch('/api/fear?action=servers');
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+                
+                const data = await response.json();
+                serversData = Array.isArray(data) ? data : (data.servers || data.data || []);
+                console.log('[Tracking] Servers loaded:', serversData.length);
+                return serversData;
+            } catch (error) {
+                console.error('[Tracking] Error fetching servers:', error);
+                return [];
+            }
+        }
+        
+        // Check if player is online
+        function checkPlayerOnline(steamId) {
+            for (const server of serversData) {
+                const liveData = server.live_data || {};
+                const players = liveData.players || [];
+                
+                const found = players.find(p => p.steam_id === steamId);
+                if (found) {
+                    return {
+                        online: true,
+                        server: server.site_name || 'Unknown Server',
+                        serverIp: server.ip || '',
+                        serverPort: server.port || '',
+                        playerData: found // Возвращаем полные данные игрока
+                    };
+                }
+            }
+            return { online: false, playerData: null };
+        }
+        
+        // Update player info from Steam API
+        async function updatePlayerInfo(player) {
+            try {
+                const response = await fetch(`/api/player?steamid=${player.steamId}`);
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+                
+                const profile = await response.json();
+                player.name = profile.nickname || profile.name || 'Unknown';
+                player.avatar = profile.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+            } catch (error) {
+                console.error('[Tracking] Error fetching player info:', error);
+                player.name = player.steamId;
+                player.avatar = 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+            }
+        }
+        
+        // Render tracked players
+        async function renderTrackedPlayers() {
+            const list = document.getElementById('trackedPlayersList');
+            
+            if (trackedPlayers.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p>Нет отслеживаемых игроков</p>
+                        <p style="font-size: 14px; margin-top: 8px;">Добавьте игроков для отслеживания их активности</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Update online status for all players
+            for (const player of trackedPlayers) {
+                const status = checkPlayerOnline(player.steamId);
+                player.online = status.online;
+                player.currentServer = status.server;
+                player.serverIp = status.serverIp;
+                player.serverPort = status.serverPort;
+                player.playerData = status.playerData; // Сохраняем данные игрока (kills, deaths и т.д.)
+                
+                // Check reports
+                player.reportsCount = getPlayerReports(player.steamId);
+            }
+            
+            list.innerHTML = trackedPlayers.map((player, index) => {
+                const connectAddress = player.serverPort ? `${player.serverIp}:${player.serverPort}` : player.serverIp;
+                const hasReports = player.reportsCount > 0;
+                
+                // Статистика игрока
+                const kills = player.playerData?.kills || 0;
+                const deaths = player.playerData?.deaths || 0;
+                const kd = deaths > 0 ? (kills / deaths).toFixed(2) : kills.toFixed(2);
+                
+                return `
+                    <div class="tracked-player-card ${hasReports ? 'has-reports' : ''}">
+                        ${hasReports ? `
+                            <div class="report-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                ${player.reportsCount} ${player.reportsCount === 1 ? 'репорт' : 'репорта'}
+                            </div>
+                        ` : ''}
+                        <div class="player-header">
+                            <img src="${player.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'}" 
+                                 alt="${player.name}" 
+                                 class="player-avatar"
+                                 onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'">
+                            <div class="player-info">
+                                <div class="player-name">${player.name || 'Unknown'}</div>
+                                <div class="player-steamid">${player.steamId}</div>
+                            </div>
+                        </div>
+                        <div class="player-status">
+                            <span class="status-badge ${player.online ? 'status-online' : 'status-offline'}">
+                                ${player.online ? 'Онлайн' : 'Оффлайн'}
+                            </span>
+                            ${player.online ? `<span class="status-badge status-server" title="${player.currentServer}">${player.currentServer}</span>` : ''}
+                        </div>
+                        ${player.online && player.playerData ? `
+                            <div class="player-stats">
+                                <div class="stat-box">
+                                    <div class="stat-label">K/D</div>
+                                    <div class="stat-value">${kd}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Киллы</div>
+                                    <div class="stat-value kills">${kills}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Смерти</div>
+                                    <div class="stat-value deaths">${deaths}</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <div class="player-actions">
+                            <button class="action-btn" onclick="window.open('https://fearproject.ru/profile/${player.steamId}', '_blank')">
+                                Профиль
+                            </button>
+                            ${player.online ? `<button class="action-btn" onclick="window.location.href='steam://connect/${connectAddress}'">Подключиться</button>` : ''}
+                            <button class="action-btn remove-btn" onclick="removePlayer(${index})">
+                                Удалить
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Add player
+        async function addPlayer() {
+            const input = document.getElementById('trackingInput');
+            const rawInput = input.value.trim();
+            
+            if (!rawInput) {
+                alert('Введите Steam ID или ссылку на профиль');
+                return;
+            }
+            
+            const steamId = extractSteamId(rawInput);
+            if (!steamId) {
+                return;
+            }
+            
+            // Check if already tracked
+            if (trackedPlayers.some(p => p.steamId === steamId)) {
+                alert('Этот игрок уже отслеживается');
+                return;
+            }
+            
+            // Add player with loading state
+            const newPlayer = {
+                steamId: steamId,
+                name: 'Загрузка...',
+                avatar: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+                online: false,
+                addedAt: Date.now()
+            };
+            
+            trackedPlayers.push(newPlayer);
+            localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
+            input.value = '';
+            
+            // Уведомляем систему уведомлений об изменении
+            if (window.notificationSystem) {
+                window.notificationSystem.updateTrackedPlayers();
+            }
+            
+            // Render immediately
+            await renderTrackedPlayers();
+            
+            // Fetch player info in background
+            await updatePlayerInfo(newPlayer);
+            localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
+            await renderTrackedPlayers();
+        }
+        
+        // Remove player
+        function removePlayer(index) {
+            if (confirm('Удалить этого игрока из отслеживания?')) {
+                trackedPlayers.splice(index, 1);
+                localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
+                
+                // Уведомляем систему уведомлений об изменении
+                if (window.notificationSystem) {
+                    window.notificationSystem.updateTrackedPlayers();
+                }
+                
+                renderTrackedPlayers();
+            }
+        }
+        
+        // Auto-refresh
+        async function refresh() {
+            await fetchServers();
+            await fetchReports();
+            await renderTrackedPlayers();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('[Tracking] Initializing...');
+            
+            // Fix scroll issues after page refresh
+            setTimeout(() => {
+                document.body.style.overflow = 'hidden';
+                document.body.style.overflowY = 'auto';
+                document.body.style.overflowX = 'hidden';
+                
+                // Ensure scroll position is accessible
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+                }
+            }, 100);
+            
+            // Initial load
+            await fetchServers();
+            await fetchReports();
+            await renderTrackedPlayers();
+            
+            // Update player info for existing players
+            for (const player of trackedPlayers) {
+                if (player.name === 'Загрузка...' || !player.avatar) {
+                    await updatePlayerInfo(player);
+                }
+            }
+            localStorage.setItem('trackedPlayers', JSON.stringify(trackedPlayers));
+            await renderTrackedPlayers();
+            
+            // Setup event listeners
+            document.getElementById('addButton').addEventListener('click', addPlayer);
+            document.getElementById('trackingInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addPlayer();
+                }
+            });
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refresh, 30000);
+            
+            console.log('[Tracking] Initialized successfully');
+        });
+    </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
+</body>
+</html>

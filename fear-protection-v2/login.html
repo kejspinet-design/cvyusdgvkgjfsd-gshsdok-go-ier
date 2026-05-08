@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Вход</title>
+    <link rel="icon" href="./9574.ico" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="css/fonts.css?v=8">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Calluna', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0f2e 50%, #0f0a1a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Кастомный скроллбар для всей страницы */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #b91c1c 0%, #dc2626 100%);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #dc2626 0%, #ef4444 100%);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.6);
+        }
+        
+        /* Для Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #dc2626 rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%);
+            animation: glowPulse 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            50% { transform: translate(-5%, -5%) scale(1.1); opacity: 0.8; }
+        }
+        
+        .login-container {
+            position: relative;
+            z-index: 1;
+            background: rgba(37, 40, 54, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(185, 28, 28, 0.3);
+            border-radius: 24px;
+            padding: 48px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(185, 28, 28, 0.2);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(185, 28, 28, 0.4);
+        }
+        
+        .login-title {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        
+        .login-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-input {
+            padding: 16px 20px;
+            background: rgba(26, 29, 41, 0.9);
+            border: 2px solid rgba(185, 28, 28, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-family: 'Calluna', 'Times New Roman', serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.2), 0 8px 25px rgba(185, 28, 28, 0.15);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .login-button {
+            padding: 18px;
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(185, 28, 28, 0.4);
+            font-family: 'Calluna', 'Times New Roman', serif;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(185, 28, 28, 0.6);
+        }
+        
+        .login-button:active {
+            transform: translateY(0);
+        }
+        
+        .login-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            color: #fca5a5;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .login-help {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .login-help a {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .login-help a:hover {
+            color: #ef4444;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: rgba(37, 40, 54, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(185, 28, 28, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(185, 28, 28, 0.2);
+            position: relative;
+        }
+        
+        /* Кастомный скроллбар для модального окна */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #b91c1c 0%, #dc2626 100%);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #dc2626 0%, #ef4444 100%);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+        
+        /* Для Firefox */
+        .modal-content {
+            scrollbar-width: thin;
+            scrollbar-color: #dc2626 rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(185, 28, 28, 0.3);
+        }
+        
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .modal-close {
+            background: rgba(185, 28, 28, 0.2);
+            border: 2px solid rgba(185, 28, 28, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(185, 28, 28, 0.4);
+            border-color: #dc2626;
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+        }
+        
+        .modal-body h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ef4444;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+        
+        .modal-body p {
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .modal-body ol, .modal-body ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-body li {
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .modal-body code {
+            background: rgba(185, 28, 28, 0.2);
+            border: 1px solid rgba(185, 28, 28, 0.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #fca5a5;
+        }
+        
+        .modal-body .warning {
+            background: rgba(251, 146, 60, 0.1);
+            border-left: 4px solid #fb923c;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .modal-body .warning strong {
+            color: #fb923c;
+        }
+        
+        .modal-body .info {
+            background: rgba(34, 211, 238, 0.1);
+            border-left: 4px solid #22d3ee;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .modal-body .info strong {
+            color: #22d3ee;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .login-button.loading .button-text {
+            display: none;
+        }
+        
+        .login-button.loading .loading-spinner {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="./9574.ico" alt="Fear Protection" class="login-logo">
+            <h1 class="login-title">Fear Protection</h1>
+            <p class="login-subtitle">Введите ваш Fear токен для входа</p>
+        </div>
+        
+        <form class="login-form" id="loginForm">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="form-group">
+                <label for="token" class="form-label">Fear Токен</label>
+                <input 
+                    type="password" 
+                    id="token" 
+                    class="form-input" 
+                    placeholder="Введите ваш токен..."
+                    required
+                    autocomplete="off"
+                >
+            </div>
+            
+            <button type="submit" class="login-button" id="loginButton">
+                <span class="button-text">Войти</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </form>
+        
+        <div class="login-help">
+            Не знаете где взять токен? 
+            <a href="#" id="showInstructions">Инструкция</a>
+            <br><br>
+            <small style="color: rgba(255, 255, 255, 0.4);">Для тестирования используйте: <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">test</code></small>
+        </div>
+    </div>
+    
+    <!-- Modal с инструкцией -->
+    <div class="modal" id="instructionsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Как получить Fear токен</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>📋 Что такое Fear токен?</h3>
+                <p>Fear токен — это специальный ключ доступа (access_token), который подтверждает вашу личность и права администратора на серверах Fear Protection.</p>
+                
+                <div class="info">
+                    <strong>ℹ️ Важно:</strong> Токен выдаётся только администраторам и модераторам серверов Fear Protection.
+                </div>
+                
+                <h3>🔑 Как получить токен</h3>
+                <ol>
+                    <li><strong>Перейдите на сайт FearProject</strong>
+                        <br>Откройте официальный сайт FearProject в браузере
+                    </li>
+                    <li><strong>Войдите в свой аккаунт</strong>
+                        <br>Авторизуйтесь на сайте используя свои учётные данные
+                    </li>
+                    <li><strong>Откройте инструменты разработчика</strong>
+                        <br>Нажмите клавишу <code>F12</code> на клавиатуре
+                        <br><small style="color: rgba(255,255,255,0.6);">Или правый клик → "Просмотреть код" → вкладка "Application"</small>
+                    </li>
+                    <li><strong>Перейдите в раздел Cookies</strong>
+                        <br>В левой панели найдите: <code>Application</code> → <code>Cookies</code> → <code>fearproject.ru</code>
+                    </li>
+                    <li><strong>Найдите access_token</strong>
+                        <br>В списке cookies найдите строку с именем <code>access_token</code>
+                    </li>
+                    <li><strong>Скопируйте токен</strong>
+                        <br>Скопируйте <strong>весь текст</strong> из колонки "Value" напротив access_token
+                        <br><small style="color: rgba(255,255,255,0.6);">Токен выглядит примерно так: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</small>
+                    </li>
+                    <li><strong>Вставьте токен на странице входа</strong>
+                        <br>Вернитесь на эту страницу и вставьте токен в поле ввода выше
+                    </li>
+                </ol>
+                
+                <div class="warning">
+                    <strong>⚠️ Безопасность:</strong>
+                    <ul style="margin-top: 10px; margin-bottom: 0;">
+                        <li>Никому не передавайте свой токен</li>
+                        <li>Не публикуйте токен в открытых каналах</li>
+                        <li>Если токен скомпрометирован, смените пароль на FearProject</li>
+                        <li>Токен действителен пока вы авторизованы на FearProject</li>
+                    </ul>
+                </div>
+                
+                <h3>🖼️ Визуальная инструкция</h3>
+                <p>Путь к токену в DevTools:</p>
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 4px solid #ef4444; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.8;">
+                    F12 → Application (вкладка сверху)<br>
+                    └─ Storage (левая панель)<br>
+                    &nbsp;&nbsp;&nbsp;└─ Cookies<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ https://fearproject.ru<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ <span style="color: #fca5a5;">access_token</span> ← скопируйте значение
+                </div>
+                
+                <h3>❓ Проблемы с токеном?</h3>
+                <p>Если у вас возникли проблемы:</p>
+                <ul>
+                    <li><strong>Токен не работает</strong> — проверьте, что скопировали его полностью из колонки "Value"</li>
+                    <li><strong>Не вижу access_token</strong> — убедитесь, что вы авторизованы на FearProject</li>
+                    <li><strong>Доступ запрещён</strong> — убедитесь, что у вас есть права модератора или выше на серверах</li>
+                    <li><strong>Токен истёк</strong> — перезайдите на FearProject и получите новый токен</li>
+                </ul>
+                
+                <div class="info">
+                    <strong>💬 Нужна помощь?</strong> Обратитесь в Discord сервер Fear Protection: <a href="https://discord.gg/hphRTbHCcb" target="_blank" style="color: #5865F2;">discord.gg/hphRTbHCcb</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/AntiDevTools.js?v=1"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const tokenInput = document.getElementById('token');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const instructionsModal = document.getElementById('instructionsModal');
+        const showInstructionsBtn = document.getElementById('showInstructions');
+        const closeModalBtn = document.getElementById('closeModal');
+        
+        // Открыть модальное окно с инструкцией
+        showInstructionsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            instructionsModal.classList.add('show');
+        });
+        
+        // Закрыть модальное окно
+        closeModalBtn.addEventListener('click', () => {
+            instructionsModal.classList.remove('show');
+        });
+        
+        // Закрыть при клике вне модального окна
+        instructionsModal.addEventListener('click', (e) => {
+            if (e.target === instructionsModal) {
+                instructionsModal.classList.remove('show');
+            }
+        });
+        
+        // Закрыть по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && instructionsModal.classList.contains('show')) {
+                instructionsModal.classList.remove('show');
+            }
+        });
+        
+        // Проверяем, есть ли уже токен
+        const savedToken = localStorage.getItem('fearToken');
+        if (savedToken) {
+            // Проверяем валидность токена
+            validateToken(savedToken).then(isValid => {
+                if (isValid) {
+                    window.location.href = 'anticheat.html';
+                }
+            });
+        }
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const token = tokenInput.value.trim();
+            
+            if (!token) {
+                showError('Пожалуйста, введите токен');
+                return;
+            }
+            
+            // Показываем загрузку
+            loginButton.classList.add('loading');
+            loginButton.disabled = true;
+            hideError();
+            
+            try {
+                // ТЕСТОВЫЙ РЕЖИМ: если токен = "test" или "admin"
+                if (token === 'test' || token === 'admin' || token === 'demo') {
+                    console.log('[Login] Using test mode');
+                    
+                    // Создаем тестовый профиль
+                    const testProfile = {
+                        steamid: '76561198000000000',
+                        name: 'Test Admin',
+                        avatar: 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg',
+                        role: 'admin'
+                    };
+                    
+                    localStorage.setItem('fearToken', token);
+                    localStorage.setItem('fearProfile', JSON.stringify(testProfile));
+                    
+                    window.location.href = 'anticheat.html';
+                    return;
+                }
+                
+                // Проверяем токен через API
+                const isValid = await validateToken(token);
+                
+                if (isValid) {
+                    // Сохраняем токен
+                    localStorage.setItem('fearToken', token);
+                    
+                    // Перенаправляем на главную страницу
+                    window.location.href = 'anticheat.html';
+                } else {
+                    // Проверяем что именно пошло не так
+                    const lastError = sessionStorage.getItem('lastLoginError');
+                    if (lastError) {
+                        showError(lastError);
+                        sessionStorage.removeItem('lastLoginError');
+                    } else {
+                        showError('Неверный токен. Проверьте правильность ввода.');
+                    }
+                    loginButton.classList.remove('loading');
+                    loginButton.disabled = false;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Ошибка при проверке токена. Попробуйте позже.');
+                loginButton.classList.remove('loading');
+                loginButton.disabled = false;
+            }
+        });
+        
+        async function validateToken(token) {
+            try {
+                console.log('[Login] Validating token:', token.substring(0, 10) + '...');
+                
+                // Декодируем JWT токен чтобы получить Steam ID
+                let steamId;
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    steamId = payload.client_id;
+                    console.log('[Login] Extracted Steam ID from token:', steamId);
+                } catch (e) {
+                    console.error('[Login] Failed to decode token:', e);
+                    sessionStorage.setItem('lastLoginError', 'Неверный формат токена. Токен должен быть в формате JWT.');
+                    return false;
+                }
+                
+                if (!steamId) {
+                    console.error('[Login] No client_id in token');
+                    sessionStorage.setItem('lastLoginError', 'Токен не содержит Steam ID.');
+                    return false;
+                }
+                
+                // Используем прокси через наш сервер для получения профиля
+                const response = await fetch(`/api/player?steamid=${steamId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                console.log('[Login] Response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('[Login] Profile data:', data);
+                    
+                    // Проверяем роль пользователя - роль находится в adminGroup.group_name
+                    const role = data.adminGroup?.group_name || data.role || data.user_role || data.group || '';
+                    console.log('[Login] User role:', role);
+                    
+                    // Разрешенные роли
+                    const allowedRoles = [
+                        'admin', 'administrator', 'админ', 'администратор',
+                        'moderator', 'модератор', 'moder', 'модер',
+                        'owner', 'владелец',
+                        'superadmin', 'супер админ', 'super admin',
+                        'helper', 'хелпер', 'помощник'
+                    ];
+                    const hasAccess = allowedRoles.some(r => role.toLowerCase().includes(r.toLowerCase()));
+                    
+                    if (!hasAccess) {
+                        console.error('[Login] Access denied - insufficient role:', role);
+                        sessionStorage.setItem('lastLoginError', `Доступ запрещен. Ваша роль: ${role || 'не определена'}. Требуется роль модератора или выше.`);
+                        return false;
+                    }
+                    
+                    // Сохраняем данные профиля
+                    localStorage.setItem('fearProfile', JSON.stringify(data));
+                    console.log('[Login] ✅ Token valid, access granted');
+                    return true;
+                }
+                
+                // Логируем ошибку
+                const errorText = await response.text();
+                console.error('[Login] API error:', response.status, errorText);
+                
+                if (response.status === 401) {
+                    sessionStorage.setItem('lastLoginError', 'Токен недействителен или истек. Получите новый токен.');
+                } else if (response.status === 403) {
+                    sessionStorage.setItem('lastLoginError', 'Доступ запрещен. Проверьте права доступа.');
+                } else if (response.status === 404) {
+                    sessionStorage.setItem('lastLoginError', 'Профиль не найден. Проверьте правильность токена.');
+                } else {
+                    sessionStorage.setItem('lastLoginError', `Ошибка API (${response.status}). Попробуйте позже.`);
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('[Login] Token validation error:', error);
+                sessionStorage.setItem('lastLoginError', `Ошибка соединения: ${error.message}`);
+                return false;
+            }
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+        
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+    </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
+</body>
+</html>

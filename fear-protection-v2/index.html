@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection</title>
+    <link rel="icon" href="./9574.ico" type="image/x-icon">
+    <script>
+        // Проверяем авторизацию
+        const token = localStorage.getItem('fearToken');
+        if (token) {
+            // Если есть токен - редирект на anticheat
+            window.location.href = 'anticheat.html';
+        } else {
+            // Если нет токена - редирект на login
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <p>Перенаправление...</p>
+</body>
+</html>

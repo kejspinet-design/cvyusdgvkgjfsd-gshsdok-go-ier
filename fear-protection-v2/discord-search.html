@@ -314,7 +314,7 @@
         .player-avatar {
             width: 60px;
             height: 60px;
-            border-radius: 50%;
+            border-radius: 8px;
             border: 2px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -525,12 +525,6 @@
                 <div class="results-grid" id="results-grid"></div>
             </div>
             
-            <!-- Debug info -->
-            <div id="debug-info" style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.7); display: none;">
-                <div style="font-weight: 600; margin-bottom: 10px; color: #667eea;">🔍 Отладочная информация:</div>
-                <div id="debug-content"></div>
-            </div>
-            
             <div id="loading" class="loading" style="display: none;">Поиск...</div>
         </div>
     </div>
@@ -580,7 +574,8 @@
                 
                 loadingEl.textContent = 'Загрузка профилей с сервера...';
                 
-                const response = await fetch('/api/player-summaries', {
+                // Пробуем загрузить через /api/admins вместо /api/player-summaries
+                const response = await fetch('/api/admins', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -592,8 +587,33 @@
                     throw new Error(`HTTP ${response.status}`);
                 }
                 
-                const data = await response.json();
-                adminProfilesCache = data.players || data || [];
+                const admins = await response.json();
+                
+                // Загружаем полные профили для каждого админа
+                loadingEl.textContent = `Загрузка профилей админов (0/${admins.length})...`;
+                
+                adminProfilesCache = [];
+                const batchSize = 5;
+                
+                for (let i = 0; i < admins.length; i += batchSize) {
+                    const batch = admins.slice(i, i + batchSize);
+                    const promises = batch.map(admin => 
+                        fetch(`/api/player?steamid=${admin.steamid}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(res => res.ok ? res.json() : null)
+                        .catch(() => null)
+                    );
+                    
+                    const profiles = await Promise.all(promises);
+                    adminProfilesCache.push(...profiles.filter(p => p !== null));
+                    
+                    loadingEl.textContent = `Загрузка профилей админов (${adminProfilesCache.length}/${admins.length})...`;
+                }
+                
                 isCacheLoaded = true;
                 
                 // Сохраняем в localStorage
@@ -655,50 +675,11 @@
             try {
                 console.log('[Discord Search] Searching in', adminProfilesCache.length, 'profiles for:', cleanDiscord);
                 
-                // Показываем отладочную информацию на странице
-                const debugInfo = document.getElementById('debug-info');
-                const debugContent = document.getElementById('debug-content');
-                debugInfo.style.display = 'block';
-                
-                let debugHTML = `<div>📊 Всего профилей в кэше: <strong>${adminProfilesCache.length}</strong></div>`;
-                debugHTML += `<div>🔎 Ищем: <strong>${cleanDiscord}</strong></div>`;
-                
-                // Выводим пример профиля для отладки
-                if (adminProfilesCache.length > 0) {
-                    const sampleProfile = adminProfilesCache[0];
-                    console.log('[Discord Search] Sample profile fields:', Object.keys(sampleProfile));
-                    console.log('[Discord Search] Sample profile:', sampleProfile);
-                    
-                    debugHTML += `<div style="margin-top: 10px;">📋 Поля в профиле:</div>`;
-                    debugHTML += `<div style="margin-left: 10px; font-family: monospace; font-size: 11px;">${Object.keys(sampleProfile).join(', ')}</div>`;
-                    
-                    // Показываем Discord поля из первого профиля
-                    const discordFields = {
-                        'discord': sampleProfile.discord,
-                        'discord_username': sampleProfile.discord_username,
-                        'discordUsername': sampleProfile.discordUsername,
-                        'discord_name': sampleProfile.discord_name,
-                        'discordName': sampleProfile.discordName,
-                        'discord_tag': sampleProfile.discord_tag,
-                        'discordTag': sampleProfile.discordTag
-                    };
-                    
-                    debugHTML += `<div style="margin-top: 10px;">💬 Discord поля в первом профиле:</div>`;
-                    for (const [key, value] of Object.entries(discordFields)) {
-                        if (value) {
-                            debugHTML += `<div style="margin-left: 10px; color: #22c55e;">✓ ${key}: <strong>${value}</strong></div>`;
-                        } else {
-                            debugHTML += `<div style="margin-left: 10px; color: rgba(255,255,255,0.3);">✗ ${key}: null</div>`;
-                        }
-                    }
-                }
-                
-                debugContent.innerHTML = debugHTML;
-                
                 // Ищем в кэше (проверяем разные поля)
                 const matchedProfiles = adminProfilesCache.filter(profile => {
                     // Проверяем все возможные поля с Discord
                     const discordFields = [
+                        profile.discordNickname,  // ← ОСНОВНОЕ ПОЛЕ!
                         profile.discord,
                         profile.discord_username,
                         profile.discordUsername,
@@ -720,7 +701,6 @@
                 });
                 
                 console.log('[Discord Search] Found matches:', matchedProfiles.length);
-                debugContent.innerHTML += `<div style="margin-top: 10px;">✅ Найдено совпадений: <strong>${matchedProfiles.length}</strong></div>`;
                 
                 if (matchedProfiles.length === 0) {
                     showError(`Админы с Discord "${cleanDiscord}" не найдены. Всего профилей в кэше: ${adminProfilesCache.length}`);
@@ -755,10 +735,11 @@
             results.forEach(player => {
                 const card = document.createElement('div');
                 card.className = 'player-card';
-                card.onclick = () => window.location.href = `profile.html?steamid=${player.steamid || player.steam_id}`;
+                // Убрали onclick с карточки, теперь только кнопка работает
                 
                 // Ищем Discord в разных полях
-                const discord = player.discord || 
+                const discord = player.discordNickname ||  // ← ОСНОВНОЕ ПОЛЕ!
+                               player.discord || 
                                player.discord_username || 
                                player.discordUsername || 
                                player.discord_name ||
@@ -786,24 +767,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">SteamID64</span>
-                            <span class="stat-value">${steamId}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Ранг</span>
-                            <span class="stat-value">${player.rank || player.level || 'N/A'}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Убийств</span>
-                            <span class="stat-value">${player.kills || 0}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Смертей</span>
-                            <span class="stat-value">${player.deaths || 0}</span>
-                        </div>
-                    </div>
+                    <button class="profile-button" onclick="event.stopPropagation(); window.open('https://fearproject.ru/profile/${steamId}', '_blank');" style="width: 100%; margin-top: 15px; padding: 10px; background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 8px; color: white; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Перейти к профилю
+                    </button>
                 `;
                 
                 resultsGrid.appendChild(card);
@@ -885,5 +855,6 @@
             }
         }
     </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
 </body>
 </html>

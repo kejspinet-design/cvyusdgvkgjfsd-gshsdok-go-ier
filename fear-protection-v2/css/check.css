@@ -1,0 +1,937 @@
+/**
+ * Check Page Styles - Modern Cybersecurity Gaming Design
+ */
+
+/* ========== BODY OVERRIDE - NO SCROLL ========== */
+body {
+    overflow: hidden !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+}
+
+.container {
+    overflow: hidden !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+}
+
+/* ========== CHECK SECTIONS ========== */
+.check-section {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========== CONFIG CHECKER CONTAINER ========== */
+.config-checker-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    padding-right: 8px;
+}
+
+.config-checker-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.config-checker-container::-webkit-scrollbar-track {
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 10px;
+}
+
+.config-checker-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--purple-primary), var(--red-primary));
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.config-checker-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--purple-secondary), var(--red-secondary));
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+/* ========== QUICK SEARCH CONTAINER ========== */
+.quick-search-container-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    padding-right: 8px;
+}
+
+.quick-search-container-page::-webkit-scrollbar {
+    width: 6px;
+}
+
+.quick-search-container-page::-webkit-scrollbar-track {
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 10px;
+}
+
+.quick-search-container-page::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--purple-primary), var(--red-primary));
+    border-radius: 10px;
+}
+
+.quick-search-container-page::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--purple-secondary), var(--red-secondary));
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+/* ========== PLAYERS LIST ========== */
+.players-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 8px 20px 0;
+    min-height: 0;
+    max-height: calc(100vh - 200px);
+}
+
+.players-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.players-list::-webkit-scrollbar-track {
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 10px;
+}
+
+.players-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--purple-primary), var(--red-primary));
+    border-radius: 10px;
+}
+
+.players-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--purple-secondary), var(--red-secondary));
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+/* ========== BAN STATUS CARDS ========== */
+.ban-status-card {
+    background: rgba(139, 92, 246, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    padding: 1.25rem;
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    animation: cardSlideIn 0.4s ease-out;
+    min-height: 200px;
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.ban-status-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--purple-primary), var(--red-primary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 16px 0 0 16px;
+}
+
+.ban-status-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+}
+
+.ban-status-card:hover::before {
+    opacity: 1;
+}
+
+.ban-status-card.banned {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.ban-status-card.banned::before {
+    background: linear-gradient(180deg, var(--red-primary), #ef4444);
+}
+
+.ban-status-card.banned:hover {
+    border-color: rgba(220, 38, 38, 0.5);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3),
+                0 0 40px rgba(220, 38, 38, 0.1);
+    transform: translateY(-2px);
+}
+
+.ban-status-card.clean {
+    background: rgba(34, 197, 94, 0.05);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+.ban-status-card.clean::before {
+    background: linear-gradient(180deg, #22c55e, #16a34a);
+}
+
+.ban-status-card.clean:hover {
+    border-color: rgba(34, 197, 94, 0.4);
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+    transform: translateY(-2px);
+}
+
+/* ========== BAN STATUS HEADER ========== */
+.ban-status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.625rem;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* Player Info (Avatar + Nickname) */
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.player-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.player-nickname {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.ban-status-steamid {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.ban-status-badge {
+    padding: 0.375rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ban-status-badge.banned {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.3));
+    color: #fca5a5;
+    border: 1px solid rgba(220, 38, 38, 0.4);
+}
+
+.ban-status-badge.clean {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+/* ========== BAN STATUS DETAILS ========== */
+.ban-status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.ban-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.ban-detail-row:last-child {
+    border-bottom: none;
+}
+
+.ban-detail-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ban-detail-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: right;
+}
+
+.ban-detail-value.banned {
+    color: #fca5a5;
+}
+
+.ban-detail-value.clean {
+    color: #86efac;
+}
+
+/* ========== ACTION BUTTONS ========== */
+.card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(139, 92, 246, 0.1);
+    flex-shrink: 0;
+}
+
+.action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-btn:hover::before {
+    left: 100%;
+}
+
+.action-btn-profile {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.2));
+    border-color: rgba(139, 92, 246, 0.4);
+    color: #a78bfa;
+}
+
+.action-btn-profile:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.3));
+    border-color: var(--purple-primary);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+    transform: translateY(-2px);
+}
+
+.action-btn-copy {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.2));
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+}
+
+.action-btn-copy:hover {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.3));
+    border-color: var(--red-primary);
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+    transform: translateY(-2px);
+}
+
+.action-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Copy success animation */
+.action-btn-copy.copied {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #86efac;
+}
+
+/* ========== QUICK SEARCH RESULT CARDS ========== */
+.quick-search-card {
+    background: rgba(139, 92, 246, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    animation: cardFadeIn 0.4s ease-out;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.quick-search-card.banned {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.3);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
+}
+
+.quick-search-card.clean {
+    background: rgba(34, 197, 94, 0.05);
+    border-color: rgba(34, 197, 94, 0.2);
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+}
+
+.quick-search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* Player Info (Avatar + Nickname) for Quick Search */
+.quick-search-header .player-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.quick-search-header .player-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.quick-search-header .player-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.quick-search-header .player-nickname {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+
+.quick-search-steamid {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.quick-search-status {
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quick-search-status.banned {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.3));
+    color: #fca5a5;
+    border: 1px solid rgba(220, 38, 38, 0.4);
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+}
+
+.quick-search-status.clean {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+.quick-search-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.quick-search-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.quick-search-detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.quick-search-detail-value {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.quick-search-detail-value.banned {
+    color: #fca5a5;
+}
+
+.quick-search-detail-value.clean {
+    color: #86efac;
+}
+
+/* ========== LOADING STATES ========== */
+.quick-search-loading,
+.config-processing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    gap: 1.5rem;
+}
+
+.processing-spinner {
+    width: 56px;
+    height: 56px;
+    border: 4px solid rgba(139, 92, 246, 0.2);
+    border-top-color: var(--purple-primary);
+    border-right-color: var(--red-primary);
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.processing-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.processing-subtext {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ========== PROGRESS BAR ========== */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, 
+        var(--purple-primary) 0%, 
+        var(--red-primary) 50%, 
+        var(--purple-primary) 100%);
+    background-size: 200% 100%;
+    animation: progressGradient 2s ease infinite;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+@keyframes progressGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    gap: 1rem;
+    color: var(--text-muted);
+}
+
+.empty-state svg {
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* ========== PLAYER INFO ========== */
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.player-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.player-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(220, 38, 38, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.player-nickname {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* ========== CARD ACTIONS ========== */
+.card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(139, 92, 246, 0.1);
+    flex-shrink: 0;
+}
+
+.action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-btn:hover::before {
+    left: 100%;
+}
+
+.action-btn-profile {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.2));
+    border-color: rgba(139, 92, 246, 0.4);
+    color: #a78bfa;
+}
+
+.action-btn-profile:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.3));
+    border-color: var(--purple-primary);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+    transform: translateY(-2px);
+}
+
+.action-btn-copy {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.2));
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+}
+
+.action-btn-copy:hover {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.3));
+    border-color: var(--red-primary);
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+    transform: translateY(-2px);
+}
+
+.action-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Copy success animation */
+.action-btn-copy.copied {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+    border-color: rgba(34, 197, 94, 0.4);
+    color: #86efac;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .ban-status-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .ban-status-steamid {
+        font-size: 0.75rem;
+    }
+    
+    .quick-search-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .quick-search-steamid {
+        font-size: 0.875rem;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+    }
+    
+    .player-nickname {
+        max-width: 150px;
+    }
+}
+
+/* ========== AVATAR STYLES ========== */
+.player-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    flex-shrink: 0;
+}
+
+.player-avatar.avatar-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+}
+
+.player-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
+
+.player-nickname {
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.player-nickname.missing {
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    font-size: 14px;
+}
+
+.ban-status-steamid {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Courier New', monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Avatar loading animation */
+@keyframes avatar-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+    }
+}
+
+.player-avatar.loading {
+    animation: avatar-pulse 2s infinite;
+}
+
+/* Avatar error state */
+.player-avatar.error {
+    filter: grayscale(1) brightness(0.7);
+    opacity: 0.7;
+}
+
+/* Avatar container for better positioning */
+.avatar-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.avatar-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    z-index: 1;
+}
+
+.avatar-fallback.hidden {
+    display: none;
+}

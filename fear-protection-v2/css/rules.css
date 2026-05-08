@@ -1,0 +1,276 @@
+/**
+ * Rules Page Styles
+ */
+
+/* Allow scroll on rules page */
+body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+}
+
+/* CRITICAL: Override base.css container overflow for sticky to work */
+body .container {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100vh !important;
+}
+
+/* Rules Page Layout */
+.rules-layout {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Sidebar */
+.rules-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.rules-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.rules-sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.rules-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 20, 147, 0.5);
+    border-radius: 10px;
+}
+
+.rules-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 20, 147, 0.7);
+}
+
+.sidebar-menu {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255, 20, 147, 0.3);
+}
+
+.sidebar-item {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 20, 147, 0.1);
+    border-color: rgba(255, 20, 147, 0.3);
+    color: white;
+    transform: translateX(5px);
+}
+
+.sidebar-item.active {
+    background: linear-gradient(90deg, rgba(255, 20, 147, 0.2), rgba(156, 39, 176, 0.2));
+    border-color: #ff1493;
+    color: white;
+}
+
+/* Content Area */
+.rules-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.rules-section {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 30px;
+    display: none;
+}
+
+.rules-section.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.subsection-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border: 2px solid #fbbf24;
+    border-radius: 10px;
+    padding: 15px 20px;
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.rule-item {
+    background: rgba(20, 20, 20, 0.8);
+    border-left: 4px solid #ff1493;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+/* Category-specific border colors */
+.rule-item[data-category="Основные"] {
+    border-left-color: #fbbf24; /* Yellow for main/punishment rules */
+}
+
+.rule-item[data-category="Общение"] {
+    border-left-color: #3b82f6; /* Blue for communication rules */
+}
+
+.rule-item[data-category="Игровой процесс"] {
+    border-left-color: #10b981; /* Green for gameplay rules */
+}
+
+.rule-item[data-category="Никнеймы и аватарки"] {
+    border-left-color: #8b5cf6; /* Purple for nickname/avatar rules */
+}
+
+.rule-item[data-category="Прочее"] {
+    border-left-color: #ef4444; /* Red for other rules */
+}
+
+.rule-item[data-category="Для администрации"] {
+    border-left-color: #f59e0b; /* Orange for admin rules */
+}
+
+.rule-item[data-category="Условия проверки"] {
+    border-left-color: #ec4899; /* Pink for check conditions */
+}
+
+.rule-item:hover {
+    border-left-color: #9c27b0;
+    box-shadow: 0 4px 20px rgba(255, 20, 147, 0.2);
+    transform: translateX(5px);
+}
+
+.rule-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.rule-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 15px;
+}
+
+.rule-punishment {
+    background: rgba(251, 191, 36, 0.1);
+    border: 2px solid #fbbf24;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 14px;
+    font-weight: normal;
+    color: #fbbf24;
+}
+
+.rule-punishment strong {
+    color: white;
+    font-weight: normal;
+}
+
+/* Sidebar Subsection (Quick Navigation) */
+.sidebar-subsection {
+    padding: 10px 15px;
+    margin-bottom: 6px;
+    margin-left: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    border-left: 2px solid transparent;
+}
+
+.sidebar-subsection:hover {
+    background: rgba(255, 20, 147, 0.05);
+    border-left-color: rgba(255, 20, 147, 0.5);
+    color: rgba(255, 255, 255, 0.9);
+    transform: translateX(3px);
+}
+
+.sidebar-subsection.active {
+    background: rgba(251, 191, 36, 0.2);
+    border-left-color: #fbbf24;
+    color: white;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .rules-layout {
+        flex-direction: column;
+    }
+    
+    .rules-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+    
+    .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .sidebar-item {
+        white-space: nowrap;
+        margin-bottom: 0;
+    }
+}

@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="version" content="2.0.1">
     <title>Fear Protection - Мои баны</title>
     <link rel="icon" href="./9574.ico" type="image/x-icon">
     
@@ -22,8 +26,9 @@
             background: #0f1419;
             color: white;
             font-family: 'Calluna', 'Times New Roman', serif;
-            overflow-x: hidden;
+            overflow: hidden;
             min-height: 100vh;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -190,7 +195,7 @@
         
         .container-content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: hidden;
             display: flex;
             flex-direction: column;
         }
@@ -343,10 +348,10 @@
         }
         
         .punishments-table {
-            background: var(--glass-medium);
-            backdrop-filter: blur(var(--blur-lg));
-            -webkit-backdrop-filter: blur(var(--blur-lg));
-            border: 2px solid var(--border-light);
+            background: rgba(26, 31, 46, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             overflow: hidden;
             flex: 1;
@@ -373,7 +378,7 @@
         }
         
         #bans-rows, #mutes-rows {
-            overflow-y: auto;
+            overflow-y: hidden;
             flex: 1;
             min-height: 0;
         }
@@ -442,6 +447,7 @@
             align-items: center;
             gap: 6px;
             font-size: 12px;
+            border: none !important;
         }
         
         .status-icon {
@@ -461,19 +467,23 @@
         }
         
         .status-active {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444 !important;
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
         }
         
         .status-expired {
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981 !important;
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
         }
         
         .duration-cell, .date-cell {
@@ -491,13 +501,15 @@
         }
         
         .id-cell {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-family: 'Courier New', monospace;
-            background: var(--glass-ultra-light);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid var(--border-subtle);
+            font-size: 11px !important;
+            color: rgba(255, 255, 255, 0.5) !important;
+            font-family: 'Courier New', monospace !important;
+            background: transparent !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
         }
         
         .loading, .empty-state {
@@ -506,57 +518,71 @@
             color: rgba(255, 255, 255, 0.4);
         }
         
-        /* Pagination styles */
         .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            padding: 20px;
-            margin-top: 20px;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 10px 15px !important;
+            margin-top: auto !important;
+            flex-shrink: 0 !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
         
         .pagination-button {
-            width: 36px;
-            height: 36px;
+            width: 50px !important;
+            height: 50px !important;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--glass-light);
-            backdrop-filter: blur(var(--blur-sm));
-            -webkit-backdrop-filter: blur(var(--blur-sm));
-            border: 2px solid var(--border-light);
-            border-radius: 8px;
-            color: var(--text-secondary);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3)) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 126, 234, 0.6) !important;
+            border-radius: 10px !important;
+            color: white !important;
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 13px;
             font-weight: 600;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4) !important;
         }
         
         .pagination-button:hover:not(.active):not(:disabled) {
-            background: var(--glass-medium);
-            border-color: var(--border-medium);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(167, 139, 250, 0.3);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5)) !important;
+            border-color: #a78bfa !important;
+            color: white !important;
+            transform: translateY(-2px) scale(1.05) !important;
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.6) !important;
         }
         
         .pagination-button.active {
-            background: var(--gradient-primary);
-            border-color: transparent;
-            color: white;
-            box-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            border-color: transparent !important;
+            color: white !important;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.5) !important;
+            pointer-events: none;
         }
         
         .pagination-button:disabled {
-            opacity: 0.3;
+            opacity: 0.3 !important;
             cursor: not-allowed;
         }
         
         .pagination-button svg {
-            width: 16px;
-            height: 16px;
+            width: 24px !important;
+            height: 24px !important;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+        }
+        
+        .pagination-info {
+            font-size: 15px !important;
+            color: white !important;
+            font-weight: 700 !important;
+            padding: 0 15px;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
         }
         
         /* Modal styles */
@@ -929,6 +955,7 @@
                             <div>Дата бана</div>
                         </div>
                         <div id="bans-rows"></div>
+                        <div id="bans-pagination" class="pagination"></div>
                     </div>
                     
                     <div id="mutes-content" class="punishments-table" style="display: none;">
@@ -941,12 +968,9 @@
                             <div>Дата бана</div>
                         </div>
                         <div id="mutes-rows"></div>
+                        <div id="mutes-pagination" class="pagination"></div>
                     </div>
                 </div>
-            </div>
-            <div class="pagination-wrapper">
-                <div id="bans-pagination" class="pagination" style="display: none;"></div>
-                <div id="mutes-pagination" class="pagination" style="display: none;"></div>
             </div>
         </div>
     </div>
@@ -1247,7 +1271,7 @@
                 row.style.cursor = 'pointer';
                 row.onclick = () => openEditModal(p);
                 row.innerHTML = `
-                    <div class="id-cell">ID: ${p.id}</div>
+                    <div class="id-cell" style="font-size: 11px !important; color: rgba(255, 255, 255, 0.5) !important; font-family: 'Courier New', monospace !important; background: transparent !important; padding: 0 !important; border-radius: 0 !important; border: none !important; outline: none !important; box-shadow: none !important;">ID: ${p.id}</div>
                     <div class="player-cell">
                         <img src="${p.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'}" 
                              class="player-avatar"
@@ -1257,7 +1281,7 @@
                         </div>
                     </div>
                     <div class="reason-cell">${p.reason || 'Не указана'}</div>
-                    <div class="status-cell ${statusClass}">
+                    <div class="status-cell ${statusClass}" style="color: ${isActive ? '#ef4444' : '#10b981'} !important; background: transparent !important; padding: 0 !important; border-radius: 0 !important; border: none !important; outline: none !important; box-shadow: none !important;">
                         <div class="status-icon"></div>
                         ${statusText}
                     </div>
@@ -1285,42 +1309,43 @@
             
             // Render pagination
             if (paginationContainer && totalPages > 1) {
+                console.log('[renderPunishments] Rendering pagination, totalPages:', totalPages, 'currentPage:', page);
                 paginationContainer.style.display = 'flex';
+                paginationContainer.style.visibility = 'visible';
+                paginationContainer.style.opacity = '1';
                 paginationContainer.innerHTML = '';
                 
-                // Previous button
+                // Previous button (left arrow)
                 const prevBtn = document.createElement('button');
                 prevBtn.className = 'pagination-button';
                 prevBtn.disabled = page === 1;
-                prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>`;
+                prevBtn.style.cssText = 'width: 35px !important; height: 35px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #667eea, #764ba2) !important; border: 2px solid #a78bfa !important; border-radius: 8px !important; color: white !important; cursor: pointer; box-shadow: 0 0 20px rgba(167, 139, 250, 0.6) !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; font-weight: bold !important;';
+                prevBtn.textContent = '<';
                 prevBtn.onclick = () => changePage(tabKey, page - 1);
                 paginationContainer.appendChild(prevBtn);
+                console.log('[renderPunishments] Added prev button');
                 
-                // Page numbers
-                const maxVisiblePages = 5;
-                let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
-                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                // Page info (current/total)
+                const pageInfo = document.createElement('div');
+                pageInfo.className = 'pagination-info';
+                pageInfo.style.cssText = 'font-size: 14px !important; color: white !important; font-weight: 700 !important; padding: 0 12px; visibility: visible !important; opacity: 1 !important; text-shadow: 0 0 10px rgba(167, 139, 250, 0.6);';
+                pageInfo.textContent = `${page}/${totalPages}`;
+                paginationContainer.appendChild(pageInfo);
+                console.log('[renderPunishments] Added page info:', pageInfo.textContent);
                 
-                if (endPage - startPage < maxVisiblePages - 1) {
-                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
-                }
-                
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = 'pagination-button' + (i === page ? ' active' : '');
-                    pageBtn.textContent = i;
-                    pageBtn.onclick = () => changePage(tabKey, i);
-                    paginationContainer.appendChild(pageBtn);
-                }
-                
-                // Next button
+                // Next button (right arrow)
                 const nextBtn = document.createElement('button');
                 nextBtn.className = 'pagination-button';
                 nextBtn.disabled = page === totalPages;
-                nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+                nextBtn.style.cssText = 'width: 35px !important; height: 35px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #667eea, #764ba2) !important; border: 2px solid #a78bfa !important; border-radius: 8px !important; color: white !important; cursor: pointer; box-shadow: 0 0 20px rgba(167, 139, 250, 0.6) !important; visibility: visible !important; opacity: 1 !important; font-size: 20px !important; font-weight: bold !important;';
+                nextBtn.textContent = '>';
                 nextBtn.onclick = () => changePage(tabKey, page + 1);
                 paginationContainer.appendChild(nextBtn);
+                console.log('[renderPunishments] Added next button');
+                console.log('[renderPunishments] Pagination container children:', paginationContainer.children.length);
+                console.log('[renderPunishments] Pagination container HTML:', paginationContainer.innerHTML.substring(0, 200));
             } else if (paginationContainer) {
+                console.log('[renderPunishments] Hiding pagination, totalPages:', totalPages);
                 paginationContainer.style.display = 'none';
             }
             
@@ -1766,6 +1791,7 @@
             // Уведомление о Discord кэше теперь показывается автоматически из BanGoalsNotifier.js
         });
     </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
     </div> <!-- End main-content -->
     </div> <!-- End content-wrapper -->
 </body>

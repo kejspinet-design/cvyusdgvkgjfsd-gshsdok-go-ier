@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Арбуз</title>
+    <link rel="icon" href="./9574.ico" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/ultra-premium-v2.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/dashboard.css?v=3">
+    
+    
+    <style>
+        /* Allow scroll */
+        body {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            background: #1a1d29;
+        }
+        
+        .container {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: auto !important;
+            min-height: 100vh !important;
+        }
+        
+        /* Animated Background */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .floating-dots {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(185, 28, 28, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .dot:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; animation-duration: 15s; }
+        .dot:nth-child(2) { left: 20%; top: 80%; animation-delay: 2s; animation-duration: 18s; }
+        .dot:nth-child(3) { left: 30%; top: 40%; animation-delay: 4s; animation-duration: 22s; }
+        .dot:nth-child(4) { left: 40%; top: 60%; animation-delay: 1s; animation-duration: 20s; }
+        .dot:nth-child(5) { left: 50%; top: 30%; animation-delay: 3s; animation-duration: 17s; }
+        .dot:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; animation-duration: 19s; }
+        .dot:nth-child(7) { left: 70%; top: 50%; animation-delay: 2.5s; animation-duration: 21s; }
+        .dot:nth-child(8) { left: 80%; top: 25%; animation-delay: 4.5s; animation-duration: 16s; }
+        .dot:nth-child(9) { left: 90%; top: 75%; animation-delay: 1.5s; animation-duration: 23s; }
+        .dot:nth-child(10) { left: 15%; top: 55%; animation-delay: 3.5s; animation-duration: 18s; }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(30px, -30px) scale(1.2);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-20px, 20px) scale(0.8);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translate(20px, 30px) scale(1.1);
+                opacity: 0.5;
+            }
+        }
+        
+        .red-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(185, 28, 28, 0.15) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+        
+        /* HEADER OVERRIDE - FORCE STYLES */
+        .header {
+            background: rgba(10, 10, 15, 0.05) !important;
+            padding: 1.5rem 2.5rem !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .header::before {
+            display: none !important;
+        }
+
+        .header-content {
+            max-width: 1800px !important;
+            margin: 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 3rem !important;
+        }
+
+        .logo-container {
+            display: inline-block !important;
+            position: relative !important;
+            padding-left: 44px !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            color: white !important;
+            line-height: 1 !important;
+        }
+
+        .logo-container img {
+            position: absolute !important;
+            left: 0 !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 8px !important;
+            display: block !important;
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, #dc2626 0%, #f87171 50%, #dc2626 100%) !important;
+            background-size: 200% auto !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            line-height: 1 !important;
+            display: inline-block !important;
+        }
+        
+        .watermelon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 200px);
+            padding: 40px 20px;
+        }
+        
+        .watermelon-image {
+            width: 400px;
+            height: 400px;
+            font-size: 300px;
+            margin-bottom: 40px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .watermelon-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- АНИМИРОВАННЫЙ ФОН -->
+    <div class="animated-background">
+        <div class="floating-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="red-glow"></div>
+    </div>
+    
+    <!-- Основной контент -->
+    <div class="container">
+        <!-- Header -->
+                <header class="header">
+            <div class="header-content">
+                <div class="logo-container" style="display: flex; align-items: center; gap: 12px;">
+                    <img src="./9574.ico" alt="Fear Protection" style="width: 44px; height: 44px;">
+                    <span class="logo-text" style="font-size: 24px; font-weight: 700; color: white;">Fear Protection</span>
+                </div>
+                
+                <!-- Navigation -->
+                <nav style="display: flex; gap: 15px;">
+                    <a href="anticheat.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">������</a>
+                    <a href="check.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">��������</a>
+                    <a href="rules.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">�������</a>
+                    <a href="tracking.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">������������</a>
+                    <a href="secret-login.html" style="background: rgba(220, 38, 38, 0.1); border: 2px solid rgba(220, 38, 38, 0.3); color: #dc2626; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">?? ���������</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="check-main">
+            <div class="watermelon-container">
+                <div class="watermelon-image">🍉</div>
+                <div class="watermelon-text">Попросила Яся</div>
+            </div>
+        </main>
+    </div>
+
+    
+    
+    
+
+    <!-- JavaScript -->
+    <script src="js/RoleAccessControl.js?v=4"></script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
+</body>
+</html>

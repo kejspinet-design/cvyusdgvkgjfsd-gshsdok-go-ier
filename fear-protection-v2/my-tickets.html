@@ -22,8 +22,9 @@
             background: #0f1419;
             color: white;
             font-family: 'Calluna', 'Times New Roman', serif;
-            overflow-x: hidden;
+            overflow: hidden;
             min-height: 100vh;
+            max-height: 100vh;
             display: flex;
             flex-direction: column;
         }
@@ -183,14 +184,14 @@
             padding: 30px 40px 0 40px;
             width: 100%;
             flex: 1;
-            overflow-y: auto;
+            overflow-y: hidden;
             display: flex;
             flex-direction: column;
         }
         
         .container-content {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: hidden;
         }
         
         .pagination-wrapper {
@@ -226,7 +227,10 @@
         }
         
         .tickets-table {
-            background: #1a1f2e;
+            background: rgba(26, 31, 46, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             overflow: visible;
         }
@@ -631,7 +635,10 @@
             paginationEl.style.display = 'flex';
             rowsEl.innerHTML = '';
             
-            tickets.forEach((ticket, index) => {
+            // Показываем только первые 9 тикетов
+            const limitedTickets = tickets.slice(0, 9);
+            
+            limitedTickets.forEach((ticket, index) => {
                 console.log(`[My Tickets] Processing ticket ${index}:`, ticket);
                 
                 const avatarUrl = ticket.intruder_avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
@@ -757,5 +764,6 @@
     </script>
     </div> <!-- End main-content -->
     </div> <!-- End content-wrapper -->
+    <script src="js/ButtonClickSound.js?v=1"></script>
 </body>
 </html>

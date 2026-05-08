@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Тикет</title>
+    <link rel="icon" href="./9574.ico" type="image/x-icon">
+    
+    <link rel="stylesheet" href="css/fonts.css?v=9">
+    <link rel="stylesheet" href="css/ultra-premium-v2.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=9">
+    <link rel="stylesheet" href="css/profile-dropdown.css?v=4">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0f1419;
+            color: white;
+            font-family: 'Calluna', 'Times New Roman', serif;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page-header {
+            background: rgba(10, 10, 15, 0.05);
+            padding: 1.5rem 2.5rem;
+            border: none;
+            box-shadow: none;
+            flex-shrink: 0;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-logo {
+            width: 44px;
+            height: 44px;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .profile-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .profile-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .profile-role {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 20px 30px;
+            display: grid;
+            grid-template-columns: 350px 1fr 280px;
+            gap: 20px;
+            align-items: start;
+            flex: 1;
+        }
+        
+        .info-panel {
+            background: #1a1f2e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .info-row {
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            word-break: break-word;
+        }
+        
+        .info-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 15px 0;
+        }
+        
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .chat-header {
+            background: #1a1f2e;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .chat-content {
+            background: #1a1f2e;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 500px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .chat-message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+        }
+        
+        .chat-message.intruder {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+        }
+        
+        .chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .chat-body {
+            flex: 1;
+        }
+        
+        .chat-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .chat-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .chat-name.intruder {
+            color: #ef4444;
+        }
+        
+        .chat-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .chat-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .right-panel {
+            background: #1a1f2e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .right-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .decision-panel {
+            background: #1a1f2e;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .decision-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .decision-option {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .decision-option:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.5);
+            color: white;
+        }
+        
+        .decision-option:active {
+            transform: scale(0.98);
+        }
+        
+        .verdict-section {
+            margin-top: 15px;
+        }
+        
+        .verdict-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .verdict-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Calluna', 'Times New Roman', serif;
+        }
+        
+        .verdict-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .close-button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-button:hover {
+            background: #5568d3;
+        }
+        
+        .close-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .status-closed {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            border-radius: 4px;
+            color: #22c55e;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .closed-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="./9574.ico" alt="Fear Protection" class="header-logo">
+                <span class="logo-text">Fear Protection</span>
+            </div>
+            
+            <button type="button" class="profile-button" id="profile-button">
+                <img src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg" 
+                     alt="Profile" 
+                     class="profile-avatar"
+                     id="profile-avatar">
+                <div class="profile-info">
+                    <span class="profile-name" id="profile-name">Загрузка...</span>
+                    <span class="profile-role" id="profile-role">Админ</span>
+                </div>
+            </button>
+        </div>
+    </header>
+    
+    <div id="loading" class="loading">Загрузка...</div>
+    
+    <div id="content" class="container" style="display: none;">
+        <!-- Left Panel: Ticket Info -->
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <!-- Кнопка "Вернуться в тикеты" всегда сверху -->
+            <button class="close-button" onclick="window.location.href='tickets.html'" style="background: rgba(255, 255, 255, 0.1);">
+                ← Вернуться в тикеты
+            </button>
+            
+            <div class="info-panel">
+                <h2 id="ticket-title" style="margin-bottom: 15px; font-size: 18px; font-weight: 700; color: white;">ТИКЕТ</h2>
+                <div id="ticket-info"></div>
+            </div>
+        </div>
+        
+        <!-- Center Panel: Chat History -->
+        <div class="center-panel">
+            <div class="chat-header">ИСТОРИЯ ЧАТА</div>
+            <div class="chat-content" id="chat-content">
+                <div class="empty-state">История чата отсутствует</div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Decision -->
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="decision-panel" id="decision-panel">
+                <div class="decision-title">ВЫБЕРИТЕ РЕШЕНИЕ</div>
+                
+                <div class="decision-option" onclick="selectDecision(this, 'Игрок был наказан')">
+                    Игрок был наказан
+                </div>
+                <div class="decision-option" onclick="selectDecision(this, 'Нарушение не подтверждено')">
+                    Нарушение не подтверждено
+                </div>
+                <div class="decision-option" onclick="selectDecision(this, 'Недостаточно доказательств')">
+                    Недостаточно доказательств
+                </div>
+                <div class="decision-option" onclick="selectDecision(this, 'Требуется дополнительная проверка')">
+                    Требуется дополнительная проверка
+                </div>
+                
+                <div class="verdict-section">
+                    <label class="verdict-label">Вердикт</label>
+                    <textarea class="verdict-input" id="verdict-input" placeholder="Введите результат рассмотрения..."></textarea>
+                </div>
+                
+                <button class="close-button" id="close-button" onclick="closeTicket()">Закрыть тикет</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- <script src="js/AntiDevTools.js?v=1"></script> -->
+    <script src="js/AuthManager.js?v=18"></script>
+    <script src="js/RoleAccessControl.js?v=4"></script>
+    <script src="js/BanGoalsNotifier.js?v=5"></script>
+    <script src="js/ProfileDropdown.js?v=3"></script>
+    <script>
+        let currentTicketId = null;
+        
+        function selectDecision(element, decision) {
+            const verdictInput = document.getElementById('verdict-input');
+            const currentText = verdictInput.value.trim();
+            
+            if (currentText) {
+                verdictInput.value = currentText + '\n\n' + decision;
+            } else {
+                verdictInput.value = decision;
+            }
+            
+            verdictInput.focus();
+            
+            element.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1)';
+            }, 150);
+        }
+        
+        async function loadTicket() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ticketId = urlParams.get('id');
+            
+            if (!ticketId) {
+                alert('ID тикета не указан');
+                window.location.href = 'tickets.html';
+                return;
+            }
+            
+            currentTicketId = ticketId;
+            
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                console.error('[Ticket View] No token found');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/reports/${ticketId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const ticket = await response.json();
+                console.log('[Ticket View] Loaded ticket:', ticket);
+                
+                displayTicket(ticket);
+                
+            } catch (error) {
+                console.error('[Ticket View] Error loading ticket:', error);
+                document.getElementById('loading').innerHTML = '<div class="empty-state">Ошибка загрузки тикета</div>';
+            }
+        }
+        
+        function displayTicket(ticket) {
+            document.getElementById('ticket-title').textContent = `ТИКЕТ #${ticket.id}`;
+            
+            const isClosed = ticket.result !== null && ticket.result !== undefined && ticket.result !== '';
+            
+            const infoHtml = `
+                <div class="info-row">
+                    <span class="info-label">Отправитель:</span>
+                    <span class="info-value">${ticket.sender || 'Неизвестно'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Нарушитель:</span>
+                    <span class="info-value">${ticket.intruder || 'Неизвестно'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">SteamID64 нарушителя:</span>
+                    <span class="info-value">${ticket.intruder_steamid || 'N/A'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">SteamID64 отправителя:</span>
+                    <span class="info-value">${ticket.sender_steamid || 'N/A'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Название сервера:</span>
+                    <span class="info-value">${ticket.server_name || 'Неизвестно'}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">IP Сервера:</span>
+                    <span class="info-value">${ticket.server_ip || 'N/A'}:${ticket.server_port || ''}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата создания:</span>
+                    <span class="info-value">${new Date(ticket.created_at).toLocaleString('ru-RU')}</span>
+                </div>
+                <div class="info-divider"></div>
+                <div class="info-row">
+                    <span class="info-label">Причина тикета:</span>
+                    <span class="info-value">${ticket.reason || 'Читы'}</span>
+                </div>
+                ${isClosed ? `
+                <div class="info-divider"></div>
+                <div class="info-row">
+                    <span class="info-label">Статус:</span>
+                    <span class="status-closed">✓ Закрыт</span>
+                </div>
+                <div class="closed-result">${ticket.result}</div>
+                ` : ''}
+            `;
+            
+            document.getElementById('ticket-info').innerHTML = infoHtml;
+            
+            const chatContent = document.getElementById('chat-content');
+            if (ticket.chat_logs && ticket.chat_logs.length > 0) {
+                let chatHtml = '';
+                
+                // Сортируем по времени: старые сверху, новые внизу
+                const sortedLogs = [...ticket.chat_logs].sort((a, b) => {
+                    return parseInt(a.created_at) - parseInt(b.created_at);
+                });
+                
+                sortedLogs.forEach(log => {
+                    const timestamp = new Date(parseInt(log.created_at) * 1000).toLocaleString('ru-RU', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const isIntruder = log.steam_id === ticket.intruder_steamid;
+                    const avatarUrl = isIntruder ? ticket.intruder_avatar : 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+                    
+                    chatHtml += `
+                        <div class="chat-message ${isIntruder ? 'intruder' : ''}">
+                            <img src="${avatarUrl}" class="chat-avatar" onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'">
+                            <div class="chat-body">
+                                <div class="chat-meta">
+                                    <span class="chat-name ${isIntruder ? 'intruder' : ''}">${log.player_name}</span>
+                                    <span class="chat-time">${timestamp}</span>
+                                </div>
+                                <div class="chat-text">${log.message}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                chatContent.innerHTML = chatHtml;
+                
+                // Автоматически прокручиваем вниз к последним (свежим) сообщениям
+                setTimeout(() => {
+                    chatContent.scrollTop = chatContent.scrollHeight;
+                }, 100);
+            } else {
+                chatContent.innerHTML = '<div class="empty-state">История чата отсутствует</div>';
+            }
+            
+            if (isClosed) {
+                document.getElementById('decision-panel').style.display = 'none';
+            }
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'grid';
+        }
+        
+        async function closeTicket() {
+            if (!currentTicketId) {
+                alert('Тикет не загружен');
+                return;
+            }
+            
+            const verdict = document.getElementById('verdict-input').value.trim();
+            if (!verdict) {
+                alert('Пожалуйста, введите вердикт');
+                return;
+            }
+            
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                alert('Токен не найден. Пожалуйста, войдите снова.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const button = document.getElementById('close-button');
+            button.disabled = true;
+            button.textContent = 'Закрытие...';
+            
+            try {
+                console.log('[Ticket View] Closing ticket:', currentTicketId, 'with result:', verdict);
+                
+                const response = await fetch(`/api/reports/${currentTicketId}/close`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ result: verdict })
+                });
+                
+                console.log('[Ticket View] Response status:', response.status);
+                
+                if (response.ok) {
+                    console.log('[Ticket View] Ticket closed successfully');
+                    alert('Тикет успешно закрыт!');
+                    window.location.href = 'tickets.html';
+                    return;
+                }
+                
+                const errorText = await response.text();
+                console.error('[Ticket View] Error response:', response.status, errorText);
+                
+                if (response.status === 503) {
+                    alert('Сервер временно недоступен. Попробуйте еще раз через несколько секунд.');
+                } else if (response.status === 400) {
+                    alert('Неверный формат запроса. Проверьте введенные данные.');
+                } else if (response.status === 404) {
+                    alert('Тикет не найден или уже закрыт.');
+                } else {
+                    alert(`Ошибка при закрытии тикета: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('[Ticket View] Error closing ticket:', error);
+                alert(`Ошибка при закрытии тикета: ${error.message}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Закрыть тикет';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTicket();
+            
+            // Загружаем данные профиля
+            loadProfileData();
+        });
+        
+        async function loadProfileData() {
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                console.error('[Profile] No token found');
+                return;
+            }
+            
+            try {
+                // Декодируем JWT токен чтобы получить Steam ID
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const steamId = payload.client_id;
+                
+                if (!steamId) {
+                    console.error('[Profile] No client_id in token');
+                    return;
+                }
+                
+                // Загружаем профиль через API
+                const response = await fetch(`/api/player?steamid=${steamId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const profile = await response.json();
+                    
+                    // Обновляем UI
+                    const avatarEl = document.getElementById('profile-avatar');
+                    const nameEl = document.getElementById('profile-name');
+                    const roleEl = document.getElementById('profile-role');
+                    
+                    if (avatarEl && profile.avatar) {
+                        avatarEl.src = profile.avatar;
+                    }
+                    
+                    if (nameEl && profile.name) {
+                        nameEl.textContent = profile.name;
+                    }
+                    
+                    if (roleEl) {
+                        const role = profile.adminGroup?.group_name || profile.role || 'Администратор';
+                        roleEl.textContent = role;
+                    }
+                    
+                    console.log('[Profile] Profile loaded successfully');
+                } else {
+                    console.error('[Profile] Failed to load profile:', response.status);
+                }
+            } catch (error) {
+                console.error('[Profile] Error loading profile:', error);
+            }
+        }
+    </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
+</body>
+</html>

@@ -286,7 +286,9 @@
         }
         
         .admin-card {
-            background: #1a1f2e;
+            background: rgba(26, 31, 46, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 20px;
@@ -628,7 +630,9 @@
                 const prevBtn = document.createElement('button');
                 prevBtn.className = 'pagination-button';
                 prevBtn.disabled = currentPage === 1;
-                prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>`;
+                prevBtn.textContent = '<';
+                prevBtn.style.fontSize = '20px';
+                prevBtn.style.fontWeight = 'bold';
                 prevBtn.onclick = () => changePage(currentPage - 1);
                 paginationEl.appendChild(prevBtn);
                 
@@ -653,7 +657,9 @@
                 const nextBtn = document.createElement('button');
                 nextBtn.className = 'pagination-button';
                 nextBtn.disabled = currentPage === totalPages;
-                nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+                nextBtn.textContent = '>';
+                nextBtn.style.fontSize = '20px';
+                nextBtn.style.fontWeight = 'bold';
                 nextBtn.onclick = () => changePage(currentPage + 1);
                 paginationEl.appendChild(nextBtn);
             } else {
@@ -762,5 +768,6 @@
             }
         }
     </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
 </body>
 </html>

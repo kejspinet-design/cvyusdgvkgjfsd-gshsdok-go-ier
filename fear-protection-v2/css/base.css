@@ -1,0 +1,352 @@
+/**
+ * Fear Protection - Premium Dark Glassmorphism Base Styles
+ */
+
+/* ============================================
+   CSS VARIABLES
+   ============================================ */
+:root {
+    /* Colors */
+    --color-bg-primary: #050505;
+    --color-bg-secondary: #0a0a0a;
+    --color-glass: rgba(255, 255, 255, 0.06);
+    --color-glass-hover: rgba(255, 255, 255, 0.09);
+    --color-border: rgba(255, 255, 255, 0.12);
+    --color-border-hover: rgba(255, 255, 255, 0.18);
+    --color-text-primary: #ffffff;
+    --color-text-secondary: rgba(255, 255, 255, 0.7);
+    --color-accent: #7c3aed;
+    --color-accent-secondary: #00d4ff;
+    
+    /* Spacing */
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Border Radius */
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    
+    /* Transitions */
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Blur */
+    --blur-md: 16px;
+    --blur-lg: 24px;
+    --blur-xl: 32px;
+}
+
+/* ============================================
+   RESET
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-glass);
+    border-radius: 999px;
+    transition: background var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-glass-hover);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-glass) var(--color-bg-secondary);
+}
+
+/* ============================================
+   ANIMATED BACKGROUND
+   ============================================ */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.03) 0%, transparent 50%);
+}
+
+.floating-dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(124, 58, 237, 0.4);
+    border-radius: 50%;
+    animation: float 20s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.3;
+    }
+    25% {
+        transform: translate(30px, -30px) scale(1.2);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translate(-20px, 20px) scale(0.8);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translate(20px, 30px) scale(1.1);
+        opacity: 0.5;
+    }
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+.container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 1.5rem 2.5rem;
+    background: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(var(--blur-xl));
+    -webkit-backdrop-filter: blur(var(--blur-xl));
+    border-bottom: 1px solid var(--color-border);
+}
+
+.header::before {
+    display: none;
+}
+
+.header-content {
+    max-width: 1800px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-container img {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+}
+
+nav a {
+    padding: 12px 24px;
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all var(--transition-base);
+    position: relative;
+    z-index: 10;
+}
+
+nav a:hover {
+    background: var(--color-glass-hover);
+    border-color: var(--color-border-hover);
+    color: var(--color-text-primary);
+    transform: translateY(-2px);
+}
+
+nav a[style*="linear-gradient"] {
+    background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+}
+
+/* ============================================
+   PROFILE BUTTON
+   ============================================ */
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    color: white;
+    position: relative;
+    z-index: 10;
+}
+
+.profile-button:hover {
+    background: var(--color-glass-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+main {
+    padding-top: 100px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+button, .btn {
+    padding: 12px 24px;
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+button:hover, .btn:hover {
+    background: var(--color-glass-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   CARDS & SECTIONS
+   ============================================ */
+.card, .section, .glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-md));
+    -webkit-backdrop-filter: blur(var(--blur-md));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: all var(--transition-base);
+}
+
+.card:hover, .section:hover {
+    background: var(--color-glass-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   INPUTS
+   ============================================ */
+input, textarea, select {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--color-glass);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: 14px;
+    transition: all var(--transition-base);
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    background: var(--color-glass-hover);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--color-text-secondary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem 1.5rem;
+    }
+    
+    nav {
+        gap: 8px;
+    }
+    
+    nav a {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}

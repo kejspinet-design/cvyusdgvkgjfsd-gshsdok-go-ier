@@ -1,0 +1,26 @@
+/**
+ * Custom Fonts - Calluna Font Family (Shancalluna Regular)
+ */
+
+@font-face {
+    font-family: 'Calluna';
+    src: url('../fonts/Calluna.ttf?v=4') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Calluna';
+    src: url('../fonts/Calluna.ttf?v=4') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Тестовый класс для проверки шрифта */
+.test-calluna {
+    font-family: 'Calluna', 'Times New Roman', serif !important;
+    font-size: 24px !important;
+    color: red !important;
+}

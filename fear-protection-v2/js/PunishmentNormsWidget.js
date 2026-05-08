@@ -14,6 +14,9 @@ class PunishmentNormsWidget {
             'Ст. Админ': { weekly: 0, monthly: 50 }
         };
         
+        // Проверяем настройку видимости виджета
+        this.isVisible = localStorage.getItem('punishmentNormsWidgetVisible') !== 'false';
+        
         this.init();
     }
     
@@ -58,6 +61,12 @@ class PunishmentNormsWidget {
     }
     
     render() {
+        // Если виджет скрыт пользователем, показываем только кнопку для включения
+        if (!this.isVisible) {
+            this.renderToggleButton();
+            return;
+        }
+        
         // Создаём контейнер для виджета
         const container = document.createElement('div');
         container.id = 'punishment-norms-widget';
@@ -200,8 +209,9 @@ class PunishmentNormsWidget {
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <div style="font-size: 12px; color: rgba(255, 255, 255, 0.5); text-transform: uppercase;">Нормы наказаний</div>
-                    <div style="font-size: 11px; color: #667eea; font-weight: 600;">${role}</div>
+                    <button onclick="window.punishmentNormsWidget.toggleVisibility()" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 4px; color: #ef4444; font-size: 11px; padding: 4px 8px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'">Скрыть</button>
                 </div>
+                <div style="font-size: 11px; color: #667eea; font-weight: 600; margin-top: -8px;">${role}</div>
                 
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="flex: 1;">
@@ -236,6 +246,60 @@ class PunishmentNormsWidget {
             </div>
         `;
         document.body.appendChild(container);
+    }
+    
+    toggleVisibility() {
+        this.isVisible = !this.isVisible;
+        localStorage.setItem('punishmentNormsWidgetVisible', this.isVisible.toString());
+        
+        // Удаляем текущий виджет/кнопку
+        const widget = document.getElementById('punishment-norms-widget');
+        const toggleBtn = document.getElementById('punishment-norms-toggle-btn');
+        if (widget) widget.remove();
+        if (toggleBtn) toggleBtn.remove();
+        
+        // Перерисовываем
+        this.render();
+    }
+    
+    renderToggleButton() {
+        const button = document.createElement('button');
+        button.id = 'punishment-norms-toggle-btn';
+        button.innerHTML = '📊';
+        button.title = 'Показать нормы наказаний';
+        button.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 2px solid rgba(102, 126, 234, 0.6);
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 9997;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+        
+        button.onmouseover = () => {
+            button.style.transform = 'scale(1.1)';
+            button.style.boxShadow = '0 6px 20px rgba(102, 126, 234, 0.6)';
+        };
+        
+        button.onmouseout = () => {
+            button.style.transform = 'scale(1)';
+            button.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+        };
+        
+        button.onclick = () => this.toggleVisibility();
+        
+        document.body.appendChild(button);
     }
     
     renderAllQuotas(container) {
@@ -297,6 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Проверяем, что пользователь авторизован
     const token = localStorage.getItem('fearToken');
     if (token) {
-        new PunishmentNormsWidget();
+        window.punishmentNormsWidget = new PunishmentNormsWidget();
     }
 });
