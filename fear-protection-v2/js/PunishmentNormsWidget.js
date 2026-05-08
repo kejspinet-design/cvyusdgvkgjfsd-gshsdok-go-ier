@@ -92,6 +92,10 @@ class PunishmentNormsWidget {
         const steamId = this.userProfile.steamid;
         const role = this.userProfile.adminGroup?.group_display_name || this.userProfile.adminGroup?.group_name || this.userProfile.role;
         
+        console.log('[PunishmentNorms] User Steam ID:', steamId);
+        console.log('[PunishmentNorms] User role:', role);
+        console.log('[PunishmentNorms] Available roles:', Object.keys(this.ROLE_QUOTAS));
+        
         // Проверяем, является ли пользователь главным админом
         const isMainAdmin = steamId === this.MAIN_ADMIN_STEAM_ID;
         
@@ -104,11 +108,15 @@ class PunishmentNormsWidget {
         // Для остальных проверяем наличие норм
         const quota = this.ROLE_QUOTAS[role];
         
+        console.log('[PunishmentNorms] Quota found for role:', quota);
+        
         if (!quota) {
             // Если нет норм - не показываем виджет вообще
             console.log('[PunishmentNorms] No quotas for role:', role, '- widget hidden');
             return;
         }
+        
+        console.log('[PunishmentNorms] Rendering widget for role:', role);
         
         // Получаем баны пользователя для расчёта прогресса
         this.fetchBansAndRender(container, role, quota);
