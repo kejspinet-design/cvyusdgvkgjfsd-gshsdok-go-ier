@@ -385,20 +385,17 @@
             const tableBody = document.getElementById('tableBody');
             
             try {
-                // Дата 3 месяца назад
-                const threeMonthsAgo = new Date();
-                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                
-                console.log('[CSO] Loading mutes from last 3 months:', threeMonthsAgo.toISOString());
+                console.log('[CSO] Starting to load all mutes...');
                 
                 let page = 1;
                 let hasMore = true;
-                let totalLoaded = 0;
+                let allLoadedMutes = [];
                 
+                // Загружаем ВСЕ муты постранично
                 while (hasMore) {
                     console.log(`[CSO] Loading page ${page}...`);
                     
-                    // Обновляем прогресс (динамически, так как не знаем сколько страниц всего)
+                    // Обновляем прогресс (динамически)
                     progressBar.style.width = `${Math.min((page / 200) * 100, 95)}%`;
                     
                     // Загружаем чат муты (type=2) через наш API прокси
@@ -410,71 +407,23 @@
                     }
                     
                     const responseData = await response.json();
-                    console.log(`[CSO] Page ${page} response:`, responseData);
                     
                     // API возвращает объект с полем punishments
                     const data = responseData.punishments || [];
                     console.log(`[CSO] Page ${page} loaded:`, data.length, 'mutes');
                     
                     if (!data || data.length === 0) {
+                        console.log('[CSO] No more data, stopping');
                         hasMore = false;
                         break;
                     }
                     
-                    // Фильтруем муты за последние 3 месяца
-                    const recentMutes = data.filter(mute => {
-                        const muteDate = new Date(mute.created * 1000); // created в секундах
-                        return muteDate >= threeMonthsAgo;
-                    });
-                    
-                    console.log(`[CSO] Page ${page}: ${recentMutes.length} mutes in last 3 months (out of ${data.length})`);
-                    
-                    // Если на странице есть хотя бы один мут старше 3 месяцев - значит дошли до старых данных
-                    const hasOldMutes = data.some(mute => {
-                        const muteDate = new Date(mute.created * 1000);
-                        return muteDate < threeMonthsAgo;
-                    });
-                    
-                    if (hasOldMutes && recentMutes.length === 0) {
-                        // Все муты на этой странице старше 3 месяцев - останавливаемся
-                        console.log('[CSO] Reached mutes older than 3 months, stopping');
-                        hasMore = false;
-                        break;
-                    }
-                    
-                    allMutes.push(...recentMutes);
-                    totalLoaded += recentMutes.length;
-                    
-                    // Обрабатываем муты
-                    recentMutes.forEach(mute => {
-                        const steamId = mute.steamid;
-                        const playerName = mute.name || 'Unknown';
-                        const playerAvatar = mute.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
-                        const createdAt = mute.created * 1000; // конвертируем в миллисекунды
-                        
-                        if (!playerStats.has(steamId)) {
-                            playerStats.set(steamId, {
-                                steamId,
-                                name: playerName,
-                                avatar: playerAvatar,
-                                muteCount: 0,
-                                lastMute: null
-                            });
-                        }
-                        
-                        const stats = playerStats.get(steamId);
-                        stats.muteCount++;
-                        
-                        if (!stats.lastMute || createdAt > stats.lastMute) {
-                            stats.lastMute = createdAt;
-                        }
-                    });
-                    
-                    // Обновляем статистику
-                    updateStats();
+                    // Добавляем все муты
+                    allLoadedMutes.push(...data);
                     
                     // Если получили меньше 100 записей - это последняя страница
                     if (data.length < 100) {
+                        console.log('[CSO] Last page reached (partial page)');
                         hasMore = false;
                     }
                     
@@ -490,7 +439,51 @@
                     await new Promise(resolve => setTimeout(resolve, 50));
                 }
                 
-                console.log('[CSO] Loading complete. Total mutes:', totalLoaded);
+                console.log('[CSO] Total mutes loaded:', allLoadedMutes.length);
+                
+                // Теперь фильтруем по дате (последние 3 месяца)
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                console.log('[CSO] Filtering mutes from:', threeMonthsAgo.toISOString());
+                
+                const recentMutes = allLoadedMutes.filter(mute => {
+                    const muteDate = new Date(mute.created * 1000); // created в секундах
+                    return muteDate >= threeMonthsAgo;
+                });
+                
+                console.log('[CSO] Mutes in last 3 months:', recentMutes.length);
+                
+                allMutes = recentMutes;
+                
+                // Обрабатываем муты
+                recentMutes.forEach(mute => {
+                    const steamId = mute.steamid;
+                    const playerName = mute.name || 'Unknown';
+                    const playerAvatar = mute.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+                    const createdAt = mute.created * 1000; // конвертируем в миллисекунды
+                    
+                    if (!playerStats.has(steamId)) {
+                        playerStats.set(steamId, {
+                            steamId,
+                            name: playerName,
+                            avatar: playerAvatar,
+                            muteCount: 0,
+                            lastMute: null
+                        });
+                    }
+                    
+                    const stats = playerStats.get(steamId);
+                    stats.muteCount++;
+                    
+                    if (!stats.lastMute || createdAt > stats.lastMute) {
+                        stats.lastMute = createdAt;
+                    }
+                });
+                
+                // Обновляем статистику
+                updateStats();
+                
+                console.log('[CSO] Loading complete. Total mutes:', allMutes.length);
                 console.log('[CSO] Unique players:', playerStats.size);
                 
                 // Завершаем прогресс
