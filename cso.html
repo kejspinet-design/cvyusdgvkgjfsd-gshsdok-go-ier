@@ -398,8 +398,8 @@
                 while (hasMore) {
                     console.log(`[CSO] Loading page ${page}...`);
                     
-                    // Обновляем прогресс
-                    progressBar.style.width = `${Math.min((page / 50) * 100, 95)}%`;
+                    // Обновляем прогресс (динамически, так как не знаем сколько страниц всего)
+                    progressBar.style.width = `${Math.min((page / 200) * 100, 95)}%`;
                     
                     // Загружаем чат муты (type=2) через наш API прокси
                     const response = await fetch(`/api/punishments?page=${page}&limit=100&type=2`);
@@ -427,10 +427,17 @@
                         return muteDate >= threeMonthsAgo;
                     });
                     
-                    console.log(`[CSO] Page ${page}: ${recentMutes.length} mutes in last 3 months`);
+                    console.log(`[CSO] Page ${page}: ${recentMutes.length} mutes in last 3 months (out of ${data.length})`);
                     
-                    if (recentMutes.length === 0 && data.length < 100) {
-                        // Если нет мутов за 3 месяца и страница неполная - останавливаемся
+                    // Если на странице есть хотя бы один мут старше 3 месяцев - значит дошли до старых данных
+                    const hasOldMutes = data.some(mute => {
+                        const muteDate = new Date(mute.created * 1000);
+                        return muteDate < threeMonthsAgo;
+                    });
+                    
+                    if (hasOldMutes && recentMutes.length === 0) {
+                        // Все муты на этой странице старше 3 месяцев - останавливаемся
+                        console.log('[CSO] Reached mutes older than 3 months, stopping');
                         hasMore = false;
                         break;
                     }
@@ -473,14 +480,14 @@
                     
                     page++;
                     
-                    // Ограничение на 100 страниц для безопасности
-                    if (page > 100) {
-                        console.warn('[CSO] Reached page limit (100)');
+                    // Ограничение на 500 страниц для безопасности (это 50,000 мутов)
+                    if (page > 500) {
+                        console.warn('[CSO] Reached page limit (500)');
                         hasMore = false;
                     }
                     
                     // Небольшая задержка между запросами
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                    await new Promise(resolve => setTimeout(resolve, 50));
                 }
                 
                 console.log('[CSO] Loading complete. Total mutes:', totalLoaded);
