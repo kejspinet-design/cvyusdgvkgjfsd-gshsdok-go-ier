@@ -560,6 +560,30 @@
                 }, 2000);
             });
         };
+        
+        // Ban player
+        window.banPlayer = function(steamId, playerName) {
+            if (confirm(`Забанить игрока ${playerName} (${steamId})?`)) {
+                // Redirect to admin panel with pre-filled ban form
+                localStorage.setItem('pendingBan', JSON.stringify({
+                    steamId: steamId,
+                    playerName: playerName
+                }));
+                window.location.href = 'admin-panel.html';
+            }
+        };
+        
+        // Mute player
+        window.mutePlayer = function(steamId, playerName) {
+            if (confirm(`Замутить игрока ${playerName} (${steamId})?`)) {
+                // Redirect to admin panel with pre-filled mute form
+                localStorage.setItem('pendingMute', JSON.stringify({
+                    steamId: steamId,
+                    playerName: playerName
+                }));
+                window.location.href = 'admin-panel.html';
+            }
+        };
     </script>
     <script src="js/ButtonClickSound.js?v=1"></script>
 </body>

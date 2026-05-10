@@ -274,6 +274,15 @@ class AntiCheatPage {
                 </button>
             </div>
             
+            <div class="action-buttons" style="margin-top: 10px;">
+                <button class="action-btn-large" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-color: #ef4444;" onclick="window.banPlayer('${steamId}', '${this.escapeHtml(displayName)}')">
+                    🚫 ЗАБАНИТЬ
+                </button>
+                <button class="action-btn-large" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-color: #f59e0b;" onclick="window.mutePlayer('${steamId}', '${this.escapeHtml(displayName)}')">
+                    🔇 ЗАМУТИТЬ
+                </button>
+            </div>
+            
             <button class="copy-btn" style="width: 100%; margin-bottom: 10px;" onclick="window.copyToClipboard('${steamId}', this)">
                 📋 STEAMID
             </button>

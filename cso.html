@@ -543,7 +543,13 @@
                         <div class="player-name">${player.name}</div>
                         <div class="steamid-cell">${player.steamId}</div>
                         <div class="mutes-cell">${player.muteCount}</div>
-                        <div class="last-mute-cell">${lastMuteDate}</div>
+                        <div class="last-mute-cell">
+                            ${lastMuteDate}
+                            <div style="display: flex; gap: 5px; margin-top: 5px;">
+                                <button onclick="banPlayer('${player.steamId}', '${player.name.replace(/'/g, "\\'")}')" style="padding: 4px 10px; background: linear-gradient(135deg, #ef4444, #dc2626); border: 1px solid #ef4444; border-radius: 6px; color: white; font-size: 11px; cursor: pointer; transition: all 0.3s ease;">🚫 Бан</button>
+                                <button onclick="mutePlayer('${player.steamId}', '${player.name.replace(/'/g, "\\'")}')" style="padding: 4px 10px; background: linear-gradient(135deg, #f59e0b, #d97706); border: 1px solid #f59e0b; border-radius: 6px; color: white; font-size: 11px; cursor: pointer; transition: all 0.3s ease;">🔇 Мут</button>
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -553,6 +559,28 @@
         
         // Запускаем загрузку
         loadAllMutes();
+        
+        // Ban player function
+        function banPlayer(steamId, playerName) {
+            if (confirm(`Забанить игрока ${playerName} (${steamId})?`)) {
+                localStorage.setItem('pendingBan', JSON.stringify({
+                    steamId: steamId,
+                    playerName: playerName
+                }));
+                window.location.href = 'admin-panel.html';
+            }
+        }
+        
+        // Mute player function
+        function mutePlayer(steamId, playerName) {
+            if (confirm(`Замутить игрока ${playerName} (${steamId})?`)) {
+                localStorage.setItem('pendingMute', JSON.stringify({
+                    steamId: steamId,
+                    playerName: playerName
+                }));
+                window.location.href = 'admin-panel.html';
+            }
+        }
     </script>
 </body>
 </html>
