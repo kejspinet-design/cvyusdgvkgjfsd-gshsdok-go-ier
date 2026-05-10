@@ -35,6 +35,14 @@ class ProfileDropdown {
             return;
         }
         
+        // Проверяем, не создан ли уже dropdown
+        const existingDropdown = document.getElementById('profile-dropdown');
+        if (existingDropdown) {
+            console.log('[ProfileDropdown] Dropdown already exists, reusing');
+            this.dropdown = existingDropdown;
+            return;
+        }
+        
         // Создаём контейнер
         const container = document.createElement('div');
         container.className = 'profile-container';
@@ -92,10 +100,14 @@ class ProfileDropdown {
         `;
         
         container.appendChild(this.dropdown);
+        console.log('[ProfileDropdown] Dropdown created successfully');
     }
     
     attachEventListeners() {
-        if (!this.profileButton) return;
+        if (!this.profileButton || !this.dropdown) {
+            console.error('[ProfileDropdown] Cannot attach listeners - missing elements');
+            return;
+        }
         
         // Клик по кнопке профиля
         this.profileButton.addEventListener('click', (e) => {
@@ -117,6 +129,8 @@ class ProfileDropdown {
                 this.close();
             }
         });
+        
+        console.log('[ProfileDropdown] Event listeners attached');
     }
     
     toggle() {
