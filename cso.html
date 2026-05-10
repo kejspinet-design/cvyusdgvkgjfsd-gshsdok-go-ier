@@ -375,6 +375,64 @@
     <script src="js/AuthManager.js?v=18"></script>
     
     <script>
+        // Блокировка консоли
+        (function() {
+            // Отключаем консоль
+            const noop = function() {};
+            ['log', 'debug', 'info', 'warn', 'error', 'dir', 'dirxml', 'trace', 'profile', 'profileEnd', 'table', 'clear'].forEach(method => {
+                console[method] = noop;
+            });
+            
+            // Блокируем открытие DevTools
+            const devtools = /./;
+            devtools.toString = function() {
+                this.opened = true;
+            };
+            
+            const checkDevTools = setInterval(() => {
+                if (devtools.opened) {
+                    window.location.reload();
+                }
+            }, 1000);
+        })();
+        
+        // Проверка на активный мут с причиной "ЧСО"
+        async function checkCsoMute() {
+            try {
+                const profile = JSON.parse(localStorage.getItem('adminProfile') || '{}');
+                const steamId = profile.steamid;
+                
+                if (!steamId) return;
+                
+                // Загружаем муты текущего пользователя
+                const response = await fetch(`/api/punishments?page=1&limit=100&type=2`);
+                if (!response.ok) return;
+                
+                const data = await response.json();
+                const userMutes = (data.punishments || []).filter(mute => 
+                    mute.steamid === steamId && 
+                    mute.status === 1 && // активный
+                    (mute.reason && mute.reason.toLowerCase().includes('чсо'))
+                );
+                
+                if (userMutes.length > 0) {
+                    // Блокируем консоль еще сильнее
+                    Object.defineProperty(window, 'console', {
+                        value: new Proxy(console, {
+                            get: () => () => {}
+                        }),
+                        writable: false,
+                        configurable: false
+                    });
+                }
+            } catch (error) {
+                // Игнорируем ошибки
+            }
+        }
+        
+        // Запускаем проверку
+        checkCsoMute();
+        
         // Данные
         let allMutes = [];
         let playerStats = new Map();
@@ -580,8 +638,32 @@
                 return;
             }
             
+            // Фильтруем игроков - убираем тех, у кого есть активный мут с причиной "ЧСО"
+            const filteredPlayers = sortedPlayers.filter(player => {
+                // Проверяем, есть ли у игрока активный мут с причиной "ЧСО"
+                const hasActiveCsoMute = allMutes.some(mute => {
+                    if (mute.steamid !== player.steamId) return false;
+                    if (mute.status !== 1) return false; // не активный
+                    
+                    const now = Date.now() / 1000; // текущее время в секундах
+                    const isExpired = mute.expires && mute.expires < now;
+                    if (isExpired) return false;
+                    
+                    // Проверяем причину на "ЧСО"
+                    const reason = (mute.reason || '').toLowerCase();
+                    return reason.includes('чсо') || reason.includes('cso');
+                });
+                
+                return !hasActiveCsoMute; // показываем только тех, у кого НЕТ активного мута ЧСО
+            });
+            
+            if (filteredPlayers.length === 0) {
+                tableBody.innerHTML = '<div class="loading">Нет игроков для отображения</div>';
+                return;
+            }
+            
             // Генерируем HTML
-            const html = sortedPlayers.map((player, index) => {
+            const html = filteredPlayers.map((player, index) => {
                 const rank = index + 1;
                 const rankClass = rank === 1 ? 'top-1' : rank === 2 ? 'top-2' : rank === 3 ? 'top-3' : '';
                 const lastMuteDate = player.lastMute ? new Date(player.lastMute).toLocaleDateString('ru-RU') : 'Неизвестно';

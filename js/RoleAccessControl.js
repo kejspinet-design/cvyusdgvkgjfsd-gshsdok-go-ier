@@ -7,6 +7,8 @@ class RoleAccessControl {
         // Разрешённые роли для доступа к админ-панели
         this.allowedRoles = [
             'STAFF',
+            'СТАФФ',
+            'СТАФ',
             'STMODER',
             'MLMODER',
             'ADMIN',
@@ -23,6 +25,8 @@ class RoleAccessControl {
         // Разрешённые display names (для отображения)
         this.allowedDisplayNames = [
             'Стафф',
+            'Стаф',
+            'Staff',
             'Ст. Модер',
             'Ст. Модератор',
             'Мл. Модератор',
@@ -243,16 +247,28 @@ const roleAccessControl = new RoleAccessControl();
 // (только для страниц админ-панели, не для login.html)
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        // Проверяем, что мы не на странице логина
+        // Проверяем, что мы не на странице логина или публичных страницах
         if (!window.location.pathname.includes('login.html') && 
-            !window.location.pathname.includes('admin-access-test.html')) {
+            !window.location.pathname.includes('admin-access-test.html') &&
+            !window.location.pathname.includes('cso.html') &&
+            !window.location.pathname.includes('anticheat.html') &&
+            !window.location.pathname.includes('check.html') &&
+            !window.location.pathname.includes('rules.html') &&
+            !window.location.pathname.includes('tracking.html') &&
+            !window.location.pathname.includes('secret-admins.html')) {
             roleAccessControl.checkAccess();
         }
     });
 } else {
-    // Проверяем, что мы не на странице логина
+    // Проверяем, что мы не на странице логина или публичных страницах
     if (!window.location.pathname.includes('login.html') && 
-        !window.location.pathname.includes('admin-access-test.html')) {
+        !window.location.pathname.includes('admin-access-test.html') &&
+        !window.location.pathname.includes('cso.html') &&
+        !window.location.pathname.includes('anticheat.html') &&
+        !window.location.pathname.includes('check.html') &&
+        !window.location.pathname.includes('rules.html') &&
+        !window.location.pathname.includes('tracking.html') &&
+        !window.location.pathname.includes('secret-admins.html')) {
         roleAccessControl.checkAccess();
     }
 }
