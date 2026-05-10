@@ -418,7 +418,11 @@
                         break;
                     }
                     
-                    const data = await response.json();
+                    const responseData = await response.json();
+                    console.log(`[CSO] Page ${page} response:`, responseData);
+                    
+                    // API может возвращать объект с полем data или массив напрямую
+                    const data = Array.isArray(responseData) ? responseData : (responseData.data || responseData.items || []);
                     console.log(`[CSO] Page ${page} loaded:`, data.length, 'mutes');
                     
                     if (!data || data.length === 0) {
