@@ -378,9 +378,64 @@
         // Данные
         let allMutes = [];
         let playerStats = new Map();
+        const CACHE_KEY = 'cso_data_cache';
+        const CACHE_TIMESTAMP_KEY = 'cso_cache_timestamp';
+        const CACHE_DURATION = 30 * 60 * 1000; // 30 минут
+        
+        // Загружаем кэшированные данные сразу
+        function loadCachedData() {
+            try {
+                const cachedData = localStorage.getItem(CACHE_KEY);
+                const cacheTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+                
+                if (cachedData && cacheTimestamp) {
+                    const data = JSON.parse(cachedData);
+                    const timestamp = parseInt(cacheTimestamp);
+                    const age = Date.now() - timestamp;
+                    
+                    console.log(`[CSO] Found cached data (age: ${Math.round(age / 1000)}s)`);
+                    
+                    // Восстанавливаем данные
+                    allMutes = data.mutes || [];
+                    playerStats = new Map(data.stats || []);
+                    
+                    // Показываем кэшированные данные
+                    updateStats();
+                    renderPlayers();
+                    
+                    console.log('[CSO] ✅ Cached data loaded instantly');
+                    
+                    // Если кэш старый (больше 30 минут) - обновляем в фоне
+                    if (age > CACHE_DURATION) {
+                        console.log('[CSO] Cache is old, refreshing in background...');
+                        setTimeout(() => loadAllMutes(true), 1000);
+                    }
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.error('[CSO] Error loading cached data:', error);
+            }
+            return false;
+        }
+        
+        // Сохранение данных в кэш
+        function saveCacheData() {
+            try {
+                const data = {
+                    mutes: allMutes,
+                    stats: Array.from(playerStats.entries())
+                };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+                console.log('[CSO] ✅ Data cached');
+            } catch (error) {
+                console.error('[CSO] Error saving cache:', error);
+            }
+        }
         
         // Загрузка данных
-        async function loadAllMutes() {
+        async function loadAllMutes(isBackgroundRefresh = false) {
             const progressBar = document.getElementById('progressBar');
             const tableBody = document.getElementById('tableBody');
             
@@ -482,6 +537,9 @@
                 console.log('[CSO] Loading complete. Total mutes:', allMutes.length);
                 console.log('[CSO] Unique players:', playerStats.size);
                 
+                // Сохраняем в кэш
+                saveCacheData();
+                
                 // Завершаем прогресс
                 progressBar.style.width = '100%';
                 setTimeout(() => {
@@ -493,7 +551,9 @@
                 
             } catch (error) {
                 console.error('[CSO] Error loading mutes:', error);
-                tableBody.innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                if (!isBackgroundRefresh) {
+                    tableBody.innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                }
                 progressBar.style.width = '0%';
             }
         }
@@ -549,8 +609,13 @@
             tableBody.innerHTML = html;
         }
         
-        // Запускаем загрузку
-        loadAllMutes();
+        // Сначала пытаемся загрузить кэшированные данные
+        const hasCachedData = loadCachedData();
+        
+        // Если кэша нет или он старый - загружаем свежие данные
+        if (!hasCachedData) {
+            loadAllMutes();
+        }
         
         // Ban player function
         function banPlayer(steamId, playerName) {
