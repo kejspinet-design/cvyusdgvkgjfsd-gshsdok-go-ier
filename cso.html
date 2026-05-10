@@ -440,6 +440,55 @@
         const CACHE_KEY = 'cso_data_cache';
         const CACHE_TIMESTAMP_KEY = 'cso_cache_timestamp';
         const CACHE_DURATION = 30 * 60 * 1000; // 30 минут
+        const PROGRESS_KEY = 'cso_loading_progress';
+        const LOADING_STATE_KEY = 'cso_loading_state';
+        
+        // Сохранение прогресса загрузки
+        function saveLoadingProgress(currentPage, totalPages, loadedMutes) {
+            try {
+                const progress = {
+                    currentPage,
+                    totalPages,
+                    loadedMutes: loadedMutes.length,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+                localStorage.setItem(LOADING_STATE_KEY, 'loading');
+            } catch (error) {
+                console.error('[CSO] Error saving progress:', error);
+            }
+        }
+        
+        // Получение прогресса загрузки
+        function getLoadingProgress() {
+            try {
+                const progress = localStorage.getItem(PROGRESS_KEY);
+                const state = localStorage.getItem(LOADING_STATE_KEY);
+                
+                if (progress && state === 'loading') {
+                    const data = JSON.parse(progress);
+                    const age = Date.now() - data.timestamp;
+                    
+                    // Если прогресс старше 5 минут - игнорируем
+                    if (age < 5 * 60 * 1000) {
+                        return data;
+                    }
+                }
+            } catch (error) {
+                console.error('[CSO] Error loading progress:', error);
+            }
+            return null;
+        }
+        
+        // Очистка прогресса загрузки
+        function clearLoadingProgress() {
+            try {
+                localStorage.removeItem(PROGRESS_KEY);
+                localStorage.setItem(LOADING_STATE_KEY, 'completed');
+            } catch (error) {
+                console.error('[CSO] Error clearing progress:', error);
+            }
+        }
         
         // Загружаем кэшированные данные сразу
         function loadCachedData() {
@@ -521,11 +570,32 @@
             try {
                 console.log('[CSO] Starting to load all mutes...');
                 
+                // Проверяем, есть ли незавершенная загрузка
+                const savedProgress = getLoadingProgress();
+                let startPage = 1;
+                let allLoadedMutes = [];
+                
+                if (savedProgress && !isBackgroundRefresh) {
+                    console.log('[CSO] Found incomplete loading, resuming from page', savedProgress.currentPage);
+                    startPage = savedProgress.currentPage;
+                    // Загружаем частично сохраненные данные из кэша
+                    const cachedData = localStorage.getItem(CACHE_KEY);
+                    if (cachedData) {
+                        const data = JSON.parse(cachedData);
+                        if (data.stats) {
+                            playerStats = new Map(data.stats);
+                            renderPlayers();
+                        }
+                    }
+                }
+                
                 // Сначала загружаем первую страницу чтобы узнать total
                 const firstResponse = await fetch(`/api/punishments?page=1&limit=100&type=2`);
                 if (!firstResponse.ok) {
                     console.error('[CSO] Failed to load first page');
-                    tableBody.innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                    if (!isBackgroundRefresh) {
+                        tableBody.innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                    }
                     return;
                 }
                 
@@ -535,21 +605,29 @@
                 
                 console.log(`[CSO] Total mutes: ${total}, Total pages: ${totalPages}`);
                 
-                let allLoadedMutes = [];
-                allLoadedMutes.push(...(firstData.punishments || []));
+                if (startPage === 1) {
+                    allLoadedMutes.push(...(firstData.punishments || []));
+                }
                 
                 // Загружаем остальные страницы
-                for (let page = 2; page <= totalPages; page++) {
+                for (let page = Math.max(2, startPage); page <= totalPages; page++) {
                     console.log(`[CSO] Loading page ${page}/${totalPages}...`);
                     
                     // Обновляем прогресс
                     progressBar.style.width = `${Math.min((page / totalPages) * 100, 95)}%`;
                     
+                    // Сохраняем прогресс каждые 10 страниц
+                    if (page % 10 === 0) {
+                        saveLoadingProgress(page, totalPages, allLoadedMutes);
+                    }
+                    
                     const response = await fetch(`/api/punishments?page=${page}&limit=100&type=2`);
                     
                     if (!response.ok) {
                         console.error('[CSO] Failed to load page:', page);
-                        continue; // Пропускаем эту страницу и продолжаем
+                        // Сохраняем прогресс и продолжаем
+                        saveLoadingProgress(page, totalPages, allLoadedMutes);
+                        continue;
                     }
                     
                     const responseData = await response.json();
@@ -571,6 +649,9 @@
                 
                 console.log('[CSO] Total mutes loaded:', allLoadedMutes.length);
                 
+                // Очищаем прогресс загрузки
+                clearLoadingProgress();
+                
                 // Теперь фильтруем по дате (последние 3 месяца)
                 const threeMonthsAgo = new Date();
                 threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -586,6 +667,7 @@
                 allMutes = recentMutes;
                 
                 // Обрабатываем муты
+                playerStats.clear(); // Очищаем старую статистику
                 recentMutes.forEach(mute => {
                     const steamId = mute.steamid;
                     const playerName = mute.name || 'Unknown';
