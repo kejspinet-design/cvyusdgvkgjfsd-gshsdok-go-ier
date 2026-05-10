@@ -265,14 +265,42 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            flex-wrap: wrap;
         }
         
         .server-cell svg {
             width: 14px;
             height: 14px;
+            flex-shrink: 0;
+        }
+        
+        .connect-button {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        
+        .connect-button:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        
+        .connect-button svg {
+            width: 12px;
+            height: 12px;
+            color: white;
         }
         
         .action-cell {
@@ -582,6 +610,14 @@
                             <line x1="12" y1="17" x2="12" y2="21"></line>
                         </svg>
                         ${serverName}
+                        ${firstTicket.server_ip ? `
+                            <button class="connect-button" onclick="event.stopPropagation(); connectToServer('${firstTicket.server_ip}', '${firstTicket.server_port || '27015'}')" title="Подключиться к серверу">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                                </svg>
+                                Подключиться
+                            </button>
+                        ` : ''}
                     </div>
                     <div class="action-cell">
                         ${count > 1 ? `
@@ -602,6 +638,24 @@
                 
                 rowsEl.appendChild(row);
             });
+        }
+        
+        // Функция подключения к серверу
+        function connectToServer(serverIp, serverPort = '27015') {
+            if (!serverIp) {
+                alert('IP сервера не найден');
+                return;
+            }
+            
+            // Формируем ссылку для подключения через Steam
+            const connectUrl = `steam://connect/${serverIp}:${serverPort}`;
+            console.log('[Tickets] Connecting to server:', connectUrl);
+            
+            // Открываем ссылку
+            window.location.href = connectUrl;
+            
+            // Показываем уведомление
+            alert(`Подключение к серверу ${serverIp}:${serverPort}\nSteam должен открыться автоматически.`);
         }
         
         async function acceptTicket(ticketId) {
