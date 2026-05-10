@@ -387,56 +387,52 @@
             try {
                 console.log('[CSO] Starting to load all mutes...');
                 
-                let page = 1;
-                let hasMore = true;
-                let allLoadedMutes = [];
+                // Сначала загружаем первую страницу чтобы узнать total
+                const firstResponse = await fetch(`/api/punishments?page=1&limit=100&type=2`);
+                if (!firstResponse.ok) {
+                    console.error('[CSO] Failed to load first page');
+                    tableBody.innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
+                    return;
+                }
                 
-                // Загружаем ВСЕ муты постранично
-                while (hasMore) {
-                    console.log(`[CSO] Loading page ${page}...`);
+                const firstData = await firstResponse.json();
+                const total = parseInt(firstData.total);
+                const totalPages = Math.ceil(total / 100);
+                
+                console.log(`[CSO] Total mutes: ${total}, Total pages: ${totalPages}`);
+                
+                let allLoadedMutes = [];
+                allLoadedMutes.push(...(firstData.punishments || []));
+                
+                // Загружаем остальные страницы
+                for (let page = 2; page <= totalPages; page++) {
+                    console.log(`[CSO] Loading page ${page}/${totalPages}...`);
                     
-                    // Обновляем прогресс (динамически)
-                    progressBar.style.width = `${Math.min((page / 200) * 100, 95)}%`;
+                    // Обновляем прогресс
+                    progressBar.style.width = `${Math.min((page / totalPages) * 100, 95)}%`;
                     
-                    // Загружаем чат муты (type=2) через наш API прокси
                     const response = await fetch(`/api/punishments?page=${page}&limit=100&type=2`);
                     
                     if (!response.ok) {
-                        console.error('[CSO] Failed to load page:', page, response.status);
-                        break;
+                        console.error('[CSO] Failed to load page:', page);
+                        continue; // Пропускаем эту страницу и продолжаем
                     }
                     
                     const responseData = await response.json();
-                    
-                    // API возвращает объект с полем punishments
                     const data = responseData.punishments || [];
-                    console.log(`[CSO] Page ${page} loaded:`, data.length, 'mutes');
                     
-                    if (!data || data.length === 0) {
-                        console.log('[CSO] No more data, stopping');
-                        hasMore = false;
-                        break;
-                    }
-                    
-                    // Добавляем все муты
-                    allLoadedMutes.push(...data);
-                    
-                    // Если получили меньше 100 записей - это последняя страница
-                    if (data.length < 100) {
-                        console.log('[CSO] Last page reached (partial page)');
-                        hasMore = false;
-                    }
-                    
-                    page++;
-                    
-                    // Ограничение на 500 страниц для безопасности (это 50,000 мутов)
-                    if (page > 500) {
-                        console.warn('[CSO] Reached page limit (500)');
-                        hasMore = false;
+                    if (data.length > 0) {
+                        allLoadedMutes.push(...data);
                     }
                     
                     // Небольшая задержка между запросами
                     await new Promise(resolve => setTimeout(resolve, 50));
+                    
+                    // Ограничение на 2000 страниц для безопасности
+                    if (page >= 2000) {
+                        console.warn('[CSO] Reached page limit (2000)');
+                        break;
+                    }
                 }
                 
                 console.log('[CSO] Total mutes loaded:', allLoadedMutes.length);
