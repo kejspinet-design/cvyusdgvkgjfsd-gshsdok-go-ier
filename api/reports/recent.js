@@ -42,7 +42,7 @@ export default async function handler(req, res) {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`,
+                'Cookie': `access_token=${token}`,
                 'User-Agent': 'Fear-Protection/1.0'
             },
             signal: controller.signal

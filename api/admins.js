@@ -42,8 +42,8 @@ export default async function handler(req, res) {
         
         // Add authorization if token is present
         if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-            console.log('[Admins API] Forwarding with auth token');
+            headers['Cookie'] = `access_token=${token}`;
+            console.log('[Admins API] Forwarding with auth token as Cookie');
         }
         
         const response = await fetch(fearApiUrl, {
