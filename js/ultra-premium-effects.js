@@ -143,6 +143,10 @@ class UltraPremiumEffects {
      * Custom cursor effects
      */
     initCursorEffects() {
+        // Disabled - custom cursor removed per user request
+        return;
+        
+        /* Original code commented out:
         // Create custom cursor
         const cursor = document.createElement('div');
         cursor.className = 'custom-cursor';
@@ -198,6 +202,7 @@ class UltraPremiumEffects {
                 cursor.style.borderColor = 'rgba(139, 92, 246, 0.5)';
             });
         });
+        */
     }
 
     /**
