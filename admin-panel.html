@@ -1095,13 +1095,19 @@
             }
             
             console.log('[Admin Panel] Loading punishments with token:', token.substring(0, 30) + '...');
+            console.log('[Admin Panel] Token length:', token.length);
+            console.log('[Admin Panel] Token starts with:', token.substring(0, 10));
             
             try {
                 let allData = [];
                 
                 if (tabType === 'bans') {
                     // Загружаем баны (type=0)
-                    const response = await fetch(`/api/admin/punishments?type=0`, {
+                    const url = `/api/admin/punishments?type=0`;
+                    console.log('[Admin Panel] Fetching:', url);
+                    console.log('[Admin Panel] Authorization header:', `Bearer ${token.substring(0, 20)}...`);
+                    
+                    const response = await fetch(url, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json',
@@ -1109,12 +1115,17 @@
                         }
                     });
                     
+                    console.log('[Admin Panel] Response status:', response.status);
+                    console.log('[Admin Panel] Response headers:', [...response.headers.entries()]);
+                    
                     if (response.ok) {
                         const data = await response.json();
                         allData = data || [];
                         console.log('[Admin Panel] Loaded bans (type=0):', allData.length, 'items');
                     } else {
+                        const errorText = await response.text();
                         console.error('[Admin Panel] Failed to load bans:', response.status);
+                        console.error('[Admin Panel] Error response:', errorText);
                     }
                 } else {
                     // Загружаем войс муты (type=1)

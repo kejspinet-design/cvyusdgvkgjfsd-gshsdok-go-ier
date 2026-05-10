@@ -21,17 +21,34 @@ export default async function handler(req, res) {
         console.log('[Admins API] Request received');
         console.log('[Admins API] Headers:', Object.keys(req.headers));
         
+        // Vercel normalizes headers to lowercase
+        const authHeader = req.headers.authorization || req.headers.Authorization;
+        console.log('[Admins API] Auth header:', authHeader ? 'present' : 'missing');
+        
+        // Extract token if present (some endpoints may require it)
+        const token = authHeader 
+            ? (authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader)
+            : null;
+        
         const fearApiUrl = 'https://api.fearproject.ru/admins';
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 25000);
         
+        const headers = {
+            'Accept': 'application/json',
+            'User-Agent': 'Fear-Protection/1.0'
+        };
+        
+        // Add authorization if token is present
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+            console.log('[Admins API] Forwarding with auth token');
+        }
+        
         const response = await fetch(fearApiUrl, {
             method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'User-Agent': 'Fear-Protection/1.0'
-            },
+            headers,
             signal: controller.signal
         });
         
