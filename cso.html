@@ -375,22 +375,6 @@
     <script src="js/AuthManager.js?v=18"></script>
     
     <script>
-        // Проверка авторизации
-        const token = localStorage.getItem('fearToken');
-        if (!token) {
-            window.location.href = 'login.html';
-        }
-        
-        // Загрузка профиля
-        const profile = JSON.parse(localStorage.getItem('fearProfile') || '{}');
-        if (profile.name) {
-            document.getElementById('profile-name').textContent = profile.name;
-            document.getElementById('profile-avatar').src = profile.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
-        }
-        if (profile.adminGroup?.group_name) {
-            document.getElementById('profile-role').textContent = profile.adminGroup.group_name;
-        }
-        
         // Данные
         let allMutes = [];
         let playerStats = new Map();
@@ -401,72 +385,105 @@
             const tableBody = document.getElementById('tableBody');
             
             try {
-                progressBar.style.width = '50%';
-                
-                console.log('[CSO] Loading mutes...');
-                
-                const response = await fetch(`/api/admin/punishments?type=2`, {
-                    headers: {
-                        'Cookie': `access_token=${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    console.error('[CSO] Failed to load mutes:', response.status);
-                    tableBody.innerHTML = '<div class="loading">Ошибка загрузки данных</div>';
-                    progressBar.style.width = '0%';
-                    return;
-                }
-                
-                const data = await response.json();
-                console.log('[CSO] Loaded mutes:', data.length);
-                
-                progressBar.style.width = '75%';
-                
                 // Дата 3 месяца назад
                 const threeMonthsAgo = new Date();
                 threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
                 
-                // Фильтруем муты за последние 3 месяца
-                const recentMutes = data.filter(mute => {
-                    const muteDate = new Date(mute.created_at || mute.createdAt || mute.date);
-                    return muteDate >= threeMonthsAgo;
-                });
+                console.log('[CSO] Loading mutes from last 3 months:', threeMonthsAgo.toISOString());
                 
-                console.log('[CSO] Mutes in last 3 months:', recentMutes.length);
+                let page = 1;
+                let hasMore = true;
+                let totalLoaded = 0;
                 
-                allMutes = recentMutes;
-                
-                // Обрабатываем муты
-                recentMutes.forEach(mute => {
-                    const steamId = mute.steamid || mute.steam_id || mute.player_steamid;
-                    const playerName = mute.player_name || mute.name || 'Unknown';
-                    const playerAvatar = mute.player_avatar || mute.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
-                    const createdAt = mute.created_at || mute.createdAt || mute.date;
+                while (hasMore) {
+                    console.log(`[CSO] Loading page ${page}...`);
                     
-                    if (!playerStats.has(steamId)) {
-                        playerStats.set(steamId, {
-                            steamId,
-                            name: playerName,
-                            avatar: playerAvatar,
-                            muteCount: 0,
-                            lastMute: null
-                        });
+                    // Обновляем прогресс
+                    progressBar.style.width = `${Math.min((page / 50) * 100, 95)}%`;
+                    
+                    // Загружаем чат муты (type=2) через наш API прокси
+                    const response = await fetch(`/api/punishments?page=${page}&limit=100&type=2`);
+                    
+                    if (!response.ok) {
+                        console.error('[CSO] Failed to load page:', page, response.status);
+                        break;
                     }
                     
-                    const stats = playerStats.get(steamId);
-                    stats.muteCount++;
+                    const responseData = await response.json();
+                    console.log(`[CSO] Page ${page} response:`, responseData);
                     
-                    if (!stats.lastMute || new Date(createdAt) > new Date(stats.lastMute)) {
-                        stats.lastMute = createdAt;
+                    // API возвращает объект с полем punishments
+                    const data = responseData.punishments || [];
+                    console.log(`[CSO] Page ${page} loaded:`, data.length, 'mutes');
+                    
+                    if (!data || data.length === 0) {
+                        hasMore = false;
+                        break;
                     }
-                });
+                    
+                    // Фильтруем муты за последние 3 месяца
+                    const recentMutes = data.filter(mute => {
+                        const muteDate = new Date(mute.created * 1000); // created в секундах
+                        return muteDate >= threeMonthsAgo;
+                    });
+                    
+                    console.log(`[CSO] Page ${page}: ${recentMutes.length} mutes in last 3 months`);
+                    
+                    if (recentMutes.length === 0 && data.length < 100) {
+                        // Если нет мутов за 3 месяца и страница неполная - останавливаемся
+                        hasMore = false;
+                        break;
+                    }
+                    
+                    allMutes.push(...recentMutes);
+                    totalLoaded += recentMutes.length;
+                    
+                    // Обрабатываем муты
+                    recentMutes.forEach(mute => {
+                        const steamId = mute.steamid;
+                        const playerName = mute.name || 'Unknown';
+                        const playerAvatar = mute.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+                        const createdAt = mute.created * 1000; // конвертируем в миллисекунды
+                        
+                        if (!playerStats.has(steamId)) {
+                            playerStats.set(steamId, {
+                                steamId,
+                                name: playerName,
+                                avatar: playerAvatar,
+                                muteCount: 0,
+                                lastMute: null
+                            });
+                        }
+                        
+                        const stats = playerStats.get(steamId);
+                        stats.muteCount++;
+                        
+                        if (!stats.lastMute || createdAt > stats.lastMute) {
+                            stats.lastMute = createdAt;
+                        }
+                    });
+                    
+                    // Обновляем статистику
+                    updateStats();
+                    
+                    // Если получили меньше 100 записей - это последняя страница
+                    if (data.length < 100) {
+                        hasMore = false;
+                    }
+                    
+                    page++;
+                    
+                    // Ограничение на 100 страниц для безопасности
+                    if (page > 100) {
+                        console.warn('[CSO] Reached page limit (100)');
+                        hasMore = false;
+                    }
+                    
+                    // Небольшая задержка между запросами
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
                 
-                // Обновляем статистику
-                updateStats();
-                
-                console.log('[CSO] Loading complete. Total mutes:', allMutes.length);
+                console.log('[CSO] Loading complete. Total mutes:', totalLoaded);
                 console.log('[CSO] Unique players:', playerStats.size);
                 
                 // Завершаем прогресс
