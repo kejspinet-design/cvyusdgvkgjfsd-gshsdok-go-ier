@@ -161,37 +161,22 @@ class ProfileDropdown {
     }
     
     async loadProfile() {
-        const token = localStorage.getItem('fearToken');
-        if (!token) {
-            console.error('[ProfileDropdown] No token found');
-            return;
+        // Используем кэшированный профиль из localStorage (уже загружен AuthManager)
+        const cachedProfile = localStorage.getItem('fearProfile');
+        
+        if (cachedProfile) {
+            try {
+                this.userProfile = JSON.parse(cachedProfile);
+                this.updateUI();
+                console.log('[ProfileDropdown] Profile loaded from cache (instant)');
+                return;
+            } catch (error) {
+                console.error('[ProfileDropdown] Error parsing cached profile:', error);
+            }
         }
         
-        try {
-            const steamId = this.getSteamId();
-            if (!steamId) {
-                console.error('[ProfileDropdown] No Steam ID in token');
-                return;
-            }
-            
-            const response = await fetch(`/api/player?steamid=${steamId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json'
-                }
-            });
-            
-            if (response.ok) {
-                this.userProfile = await response.json();
-                this.updateUI();
-                console.log('[ProfileDropdown] Profile loaded successfully');
-            } else {
-                console.error('[ProfileDropdown] Failed to load profile:', response.status);
-            }
-        } catch (error) {
-            console.error('[ProfileDropdown] Error loading profile:', error);
-        }
+        // Если кэша нет (не должно быть, но на всякий случай)
+        console.warn('[ProfileDropdown] No cached profile found, this should not happen');
     }
     
     updateUI() {
