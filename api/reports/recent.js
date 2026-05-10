@@ -18,7 +18,11 @@ export default async function handler(req, res) {
     }
     
     try {
-        const authHeader = req.headers.authorization;
+        // Vercel normalizes headers to lowercase
+        const authHeader = req.headers.authorization || req.headers.Authorization;
+        
+        console.log('[Recent Reports API] Headers:', Object.keys(req.headers));
+        console.log('[Recent Reports API] Auth header:', authHeader ? 'present' : 'missing');
         
         if (!authHeader) {
             res.status(401).json({ error: 'Missing authorization token' });

@@ -18,6 +18,9 @@ export default async function handler(req, res) {
     }
     
     try {
+        console.log('[Admins API] Request received');
+        console.log('[Admins API] Headers:', Object.keys(req.headers));
+        
         const fearApiUrl = 'https://api.fearproject.ru/admins';
         
         const controller = new AbortController();
