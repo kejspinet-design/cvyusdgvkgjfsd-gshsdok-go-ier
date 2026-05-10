@@ -206,7 +206,6 @@ class AuthManager {
                 steamId: steamId,
                 nickname: nickname,
                 role: role,
-                token: token, // Полный токен
                 isMainAdmin: steamId === this.ADMIN_STEAM_ID
             };
             
