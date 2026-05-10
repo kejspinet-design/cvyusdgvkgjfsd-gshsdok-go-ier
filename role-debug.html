@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Role Debug</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0f1419;
+            color: white;
+            font-family: 'Courier New', monospace;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1a1f2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .info-block {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .label {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .value {
+            color: #10b981;
+            word-break: break-all;
+        }
+        
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            color: #10b981;
+        }
+        
+        .error {
+            color: #ef4444;
+        }
+        
+        .success {
+            color: #10b981;
+        }
+        
+        button {
+            background: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Role Debug Tool</h1>
+        
+        <div class="info-block">
+            <div class="label">Token Status:</div>
+            <div class="value" id="token-status">Checking...</div>
+        </div>
+        
+        <div class="info-block">
+            <div class="label">Steam ID:</div>
+            <div class="value" id="steam-id">-</div>
+        </div>
+        
+        <div class="info-block">
+            <div class="label">Group Name (group_name):</div>
+            <div class="value" id="group-name">-</div>
+        </div>
+        
+        <div class="info-block">
+            <div class="label">Display Name (group_display_name):</div>
+            <div class="value" id="display-name">-</div>
+        </div>
+        
+        <div class="info-block">
+            <div class="label">Role (fallback):</div>
+            <div class="value" id="role">-</div>
+        </div>
+        
+        <div class="info-block">
+            <div class="label">Access Status:</div>
+            <div class="value" id="access-status">-</div>
+        </div>
+        
+        <div class="info-block">
+            <div class="label">Full Profile JSON:</div>
+            <pre id="profile-json">-</pre>
+        </div>
+        
+        <button onclick="location.reload()">🔄 Refresh</button>
+        <button onclick="window.location.href='admin-panel.html'">← Back to Admin Panel</button>
+    </div>
+    
+    <script>
+        async function debugRole() {
+            const token = localStorage.getItem('fearToken');
+            
+            if (!token) {
+                document.getElementById('token-status').innerHTML = '<span class="error">❌ No token found</span>';
+                return;
+            }
+            
+            document.getElementById('token-status').innerHTML = '<span class="success">✓ Token found</span>';
+            
+            try {
+                // Декодируем токен
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const steamId = payload.client_id;
+                
+                document.getElementById('steam-id').textContent = steamId || 'Not found';
+                
+                // Загружаем профиль
+                const response = await fetch(`/api/player?steamid=${steamId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    document.getElementById('profile-json').innerHTML = `<span class="error">Failed to load profile: ${response.status}</span>`;
+                    return;
+                }
+                
+                const profile = await response.json();
+                
+                // Отображаем данные
+                const groupName = profile.adminGroup?.group_name || 'Not found';
+                const displayName = profile.adminGroup?.group_display_name || 'Not found';
+                const role = profile.role || 'Not found';
+                
+                document.getElementById('group-name').textContent = groupName;
+                document.getElementById('display-name').textContent = displayName;
+                document.getElementById('role').textContent = role;
+                document.getElementById('profile-json').textContent = JSON.stringify(profile, null, 2);
+                
+                // Проверяем доступ
+                const allowedRoles = [
+                    'STAFF', 'STMODER', 'MLMODER', 'ADMIN', 'MODER', 'MODERATOR',
+                    'STADMIN', 'ADMIN+', 'Админ+', 'АДМИН+', 'МОДЕРАТОР', 'МОДЕР'
+                ];
+                
+                const allowedDisplayNames = [
+                    'Стафф', 'Ст. Модер', 'Ст. Модератор', 'Мл. Модератор',
+                    'Админ', 'Модератор', 'Ст. Админ', 'АДМИН+', 'Админ+', 'Модер'
+                ];
+                
+                const groupNameUpper = groupName.toUpperCase();
+                let hasAccess = false;
+                let matchReason = '';
+                
+                // Проверка по group_name
+                for (const r of allowedRoles) {
+                    if (groupNameUpper === r.toUpperCase()) {
+                        hasAccess = true;
+                        matchReason = `Exact match by group_name: "${groupName}" === "${r}"`;
+                        break;
+                    }
+                }
+                
+                // Проверка по display_name
+                if (!hasAccess) {
+                    for (const n of allowedDisplayNames) {
+                        if (displayName === n) {
+                            hasAccess = true;
+                            matchReason = `Exact match by display_name: "${displayName}" === "${n}"`;
+                            break;
+                        }
+                    }
+                }
+                
+                // Проверка contains
+                if (!hasAccess) {
+                    for (const r of allowedRoles) {
+                        if (groupNameUpper.includes(r.toUpperCase())) {
+                            hasAccess = true;
+                            matchReason = `Contains match by group_name: "${groupName}" contains "${r}"`;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!hasAccess) {
+                    for (const n of allowedDisplayNames) {
+                        if (displayName.includes(n)) {
+                            hasAccess = true;
+                            matchReason = `Contains match by display_name: "${displayName}" contains "${n}"`;
+                            break;
+                        }
+                    }
+                }
+                
+                if (hasAccess) {
+                    document.getElementById('access-status').innerHTML = `<span class="success">✓ ACCESS GRANTED</span><br><small>${matchReason}</small>`;
+                } else {
+                    document.getElementById('access-status').innerHTML = `<span class="error">❌ ACCESS DENIED</span><br><small>Role not in allowed list</small>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('profile-json').innerHTML = `<span class="error">Error: ${error.message}</span>`;
+                console.error('Debug error:', error);
+            }
+        }
+        
+        // Запускаем при загрузке
+        debugRole();
+    </script>
+</body>
+</html>

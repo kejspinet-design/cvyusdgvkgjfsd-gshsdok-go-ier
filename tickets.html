@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Тикеты</title>
+    <link rel="icon" href="./9574.ico" type="image/x-icon">
+    
+    <link rel="stylesheet" href="css/fonts.css?v=8">
+    <link rel="stylesheet" href="css/ultra-premium-v2.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=8">
+    <link rel="stylesheet" href="css/profile-dropdown.css?v=4">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0f1419;
+            color: white;
+            font-family: 'Calluna', 'Times New Roman', serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .page-header {
+            background: rgba(10, 10, 15, 0.05);
+            padding: 1.5rem 2.5rem;
+            border: none;
+            box-shadow: none;
+            flex-shrink: 0;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-logo {
+            width: 44px;
+            height: 44px;
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .profile-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .profile-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .profile-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .profile-role {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Content Wrapper with Sidebar */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-menu {
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border-color: #667eea;
+            color: white;
+        }
+        
+        .sidebar-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            width: 100%;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .tickets-table {
+            background: rgba(26, 31, 46, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: visible;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 150px 250px 150px 1fr 180px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 150px 250px 150px 1fr 180px;
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+            align-items: center;
+            min-height: 70px;
+        }
+        
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .date-cell {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .player-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: visible;
+        }
+        
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+        
+        .player-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            overflow: visible;
+        }
+        
+        .reason-cell {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .server-cell {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .server-cell svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .action-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ticket-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(251, 191, 36, 0.2);
+            border: 1px solid #fbbf24;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fbbf24;
+        }
+        
+        .ticket-count svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .accept-button {
+            padding: 8px 20px;
+            background: #667eea;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .accept-button:hover {
+            background: #5568d3;
+        }
+        
+        .loading, .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <!-- Left: Logo -->
+            <div class="logo-container">
+                <img src="./9574.ico" alt="Fear Protection" class="header-logo">
+                <span class="logo-text">Fear Protection</span>
+            </div>
+            
+            <!-- Center: Navigation (основной сайт) -->
+            <nav style="display: flex; gap: 15px; align-items: center; justify-content: center; flex: 1;">
+                <a href="anticheat.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s ease;">Игроки</a>
+                <a href="secret-admins.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s ease;">Админы</a>
+                <a href="check.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s ease;">Проверка</a>
+                <a href="rules.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s ease;">Правила</a>
+                <a href="tracking.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s ease;">Отслеживание</a>
+                <a href="https://discord.gg/hphRTbHCcb" target="_blank" style="background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%); border: 2px solid #5865F2; color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); transition: all 0.3s ease;">
+                    <svg width="20" height="20" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+                    </svg>
+                    Fear Protection
+                </a>
+            </nav>
+            
+            <!-- Right: Profile -->
+            <button type="button" class="profile-button" id="profile-button">
+                <div class="profile-info">
+                    <span class="profile-name" id="profile-name">Загрузка...</span>
+                    <span class="profile-role" id="profile-role">Админ</span>
+                </div>
+                <img src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg" 
+                     alt="Profile" 
+                     class="profile-avatar"
+                     id="profile-avatar">
+            </button>
+        </div>
+    </header>
+    
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <div class="sidebar-title">Навигация</div>
+                
+                <a href="admin-panel.html" class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6"></path>
+                        <circle cx="12" cy="12" r="10" stroke-dasharray="2 4"></circle>
+                    </svg>
+                    Мои блокировки
+                </a>
+                
+                <a href="admins-list.html" class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Список админов
+                </a>
+                
+                <a href="tickets.html" class="sidebar-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Тикеты
+                </a>
+                
+                <a href="my-tickets.html" class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Мои тикеты
+                </a>
+                
+                <a href="ban-goals.html" class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Цели банов
+                </a>
+                
+                <a href="quotas.html" class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Нормы наказаний
+                </a>
+                
+                <a href="discord-search.html" class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    Поиск по Discord
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+        
+        <div class="container">
+            <div id="loading" class="loading">Загрузка...</div>
+            
+            <div id="tickets-table" class="tickets-table" style="display: none;">
+                <div class="table-header">
+                    <div>Дата</div>
+                    <div>Нарушитель</div>
+                    <div>Причина</div>
+                    <div>Сервер</div>
+                    <div>Действие</div>
+                </div>
+                <div id="tickets-rows"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/AntiDevTools.js?v=1"></script>
+    <script src="js/AuthManager.js?v=18"></script>
+    <script src="js/RoleAccessControl.js?v=5"></script>
+    <script src="js/BanGoalsNotifier.js?v=5"></script>
+    <script src="js/ProfileDropdown.js?v=3"></script>
+    <script src="js/PunishmentNormsWidget.js?v=1"></script>
+    <script>
+        let allTickets = [];
+        
+        async function loadTickets() {
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                console.error('[Tickets] No token found, redirecting to login');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/reports/recent', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        console.error('[Tickets] Unauthorized, redirecting to login');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('[Tickets] Loaded tickets:', data.length);
+                console.log('[Tickets] Sample ticket:', data[0]);
+                console.log('[Tickets] All ticket keys:', data[0] ? Object.keys(data[0]) : 'no data');
+                
+                allTickets = data;
+                renderTickets(data);
+            } catch (error) {
+                console.error('[Tickets] Error loading tickets:', error);
+                document.getElementById('loading').innerHTML = '<div class="empty-state">Ошибка загрузки данных</div>';
+            }
+        }
+        
+        function formatTimeAgo(timestamp) {
+            const now = Math.floor(Date.now() / 1000);
+            const diff = now - timestamp;
+            
+            if (diff < 60) return 'Сейчас';
+            if (diff < 3600) return `${Math.floor(diff / 60)} минут назад`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} часов назад`;
+            return `${Math.floor(diff / 86400)} дней назад`;
+        }
+        
+        function renderTickets(tickets) {
+            const loadingEl = document.getElementById('loading');
+            const tableEl = document.getElementById('tickets-table');
+            const rowsEl = document.getElementById('tickets-rows');
+            
+            if (!tickets || tickets.length === 0) {
+                loadingEl.innerHTML = '<div class="empty-state">Нет тикетов</div>';
+                loadingEl.style.display = 'block';
+                tableEl.style.display = 'none';
+                return;
+            }
+            
+            loadingEl.style.display = 'none';
+            tableEl.style.display = 'block';
+            rowsEl.innerHTML = '';
+            
+            // Группируем тикеты по нарушителю (steamid)
+            const groupedTickets = {};
+            tickets.forEach(ticket => {
+                const key = ticket.intruder_steamid || ticket.violator_steamid || ticket.steamid;
+                if (!groupedTickets[key]) {
+                    groupedTickets[key] = [];
+                }
+                groupedTickets[key].push(ticket);
+            });
+            
+            // Отображаем сгруппированные тикеты
+            Object.values(groupedTickets).forEach(group => {
+                const firstTicket = group[0];
+                const count = group.length;
+                
+                // Используем правильные поля из API
+                const avatarUrl = firstTicket.intruder_avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+                const playerName = firstTicket.intruder || 'Неизвестно';
+                const reason = firstTicket.reason || 'Читы';
+                const serverName = firstTicket.server_name || 'Неизвестно';
+                
+                // Парсим дату
+                let timestamp;
+                if (firstTicket.created_at) {
+                    timestamp = Math.floor(new Date(firstTicket.created_at).getTime() / 1000);
+                } else {
+                    timestamp = Math.floor(Date.now() / 1000);
+                }
+                
+                console.log('[Ticket Render]', {
+                    playerName,
+                    avatarUrl,
+                    reason,
+                    serverName,
+                    count,
+                    timestamp
+                });
+                
+                const row = document.createElement('div');
+                row.className = 'table-row';
+                
+                row.innerHTML = `
+                    <div class="date-cell">${formatTimeAgo(timestamp)}</div>
+                    <div class="player-cell">
+                        <img src="${avatarUrl}" 
+                             class="player-avatar"
+                             onerror="this.src='https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg'">
+                        <div class="player-name">${playerName}</div>
+                    </div>
+                    <div class="reason-cell">${reason}</div>
+                    <div class="server-cell">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        ${serverName}
+                    </div>
+                    <div class="action-cell">
+                        ${count > 1 ? `
+                            <div class="ticket-count">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                ${count}
+                            </div>
+                        ` : ''}
+                        <button class="accept-button" onclick="event.stopPropagation(); acceptTicket(${firstTicket.id || 0})">Принять</button>
+                    </div>
+                `;
+                
+                rowsEl.appendChild(row);
+            });
+        }
+        
+        async function acceptTicket(ticketId) {
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                alert('Токен не найден. Пожалуйста, войдите снова.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                // Пробуем разные варианты
+                console.log('[Tickets] Trying to accept ticket:', ticketId);
+                
+                // Вариант 1: POST /reports/{id}/accept
+                let response = await fetch(`/api/reports/${ticketId}/accept`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                // Если 404, пробуем PUT
+                if (response.status === 404) {
+                    console.log('[Tickets] POST failed, trying PUT...');
+                    response = await fetch(`/api/reports/${ticketId}/accept`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+                }
+                
+                // Если все еще 404, пробуем PATCH
+                if (response.status === 404) {
+                    console.log('[Tickets] PUT failed, trying PATCH...');
+                    response = await fetch(`/api/reports/${ticketId}/accept`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('[Tickets] API Error:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+                }
+                
+                console.log('[Tickets] Ticket accepted:', ticketId);
+                
+                // Редирект на страницу просмотра тикета
+                window.location.href = `ticket-view.html?id=${ticketId}`;
+                
+            } catch (error) {
+                console.error('[Tickets] Error accepting ticket:', error);
+                alert(`Ошибка при принятии тикета: ${error.message}`);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTickets();
+            loadProfileData();
+        });
+        
+        async function loadProfileData() {
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                console.error('[Profile] No token found');
+                return;
+            }
+            
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const steamId = payload.client_id;
+                
+                if (!steamId) {
+                    console.error('[Profile] No client_id in token');
+                    return;
+                }
+                
+                const response = await fetch(`/api/player?steamid=${steamId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const profile = await response.json();
+                    
+                    const avatarEl = document.getElementById('profile-avatar');
+                    const nameEl = document.getElementById('profile-name');
+                    const roleEl = document.getElementById('profile-role');
+                    
+                    if (avatarEl && profile.avatar) {
+                        avatarEl.src = profile.avatar;
+                    }
+                    
+                    if (nameEl && profile.name) {
+                        nameEl.textContent = profile.name;
+                    }
+                    
+                    if (roleEl) {
+                        const role = profile.adminGroup?.group_name || profile.role || 'Администратор';
+                        roleEl.textContent = role;
+                    }
+                    
+                    console.log('[Profile] Profile loaded successfully');
+                } else {
+                    console.error('[Profile] Failed to load profile:', response.status);
+                }
+            } catch (error) {
+                console.error('[Profile] Error loading profile:', error);
+            }
+        }
+    </script>
+    </div> <!-- End main-content -->
+    </div> <!-- End content-wrapper -->
+    <script src="js/ButtonClickSound.js?v=1"></script>
+</body>
+</html>

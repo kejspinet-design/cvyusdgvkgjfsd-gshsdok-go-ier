@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="css/fonts.css?v=8">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/base.css?v=8">
+    <link rel="stylesheet" href="css/ultra-premium-v2.css?v=3">
     <link rel="stylesheet" href="css/style.css?v=8">
     <link rel="stylesheet" href="css/dashboard.css?v=8">
+    <link rel="stylesheet" href="css/profile-dropdown.css?v=4">
     
     
     <style>
@@ -119,10 +120,41 @@
             -webkit-backdrop-filter: none !important;
             border: none !important;
             box-shadow: none !important;
+            position: relative !important;
+            z-index: 100 !important;
         }
         
         .header::before {
             display: none !important;
+        }
+        
+        /* Navigation buttons - make clickable */
+        nav {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        nav a {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        nav a:hover:not([href*="discord"]):not([style*="linear-gradient"]) {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-2px);
+        }
+        
+        /* Profile button */
+        .profile-button {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        .profile-button:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-2px);
         }
         
         .tracking-container {
@@ -500,15 +532,17 @@
     <div class="container">
         <!-- Header -->
                 <header class="header">
-            <div class="header-content">
+            <div class="header-content" style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px;">
+                <!-- Left: Logo -->
                 <div class="logo-container" style="display: flex; align-items: center; gap: 12px;">
                     <img src="./9574.ico" alt="Fear Protection" style="width: 44px; height: 44px;">
                     <span class="logo-text" style="font-size: 24px; font-weight: 700; color: white;">Fear Protection</span>
                 </div>
                 
-                <!-- Navigation -->
-                <nav style="display: flex; gap: 15px; align-items: center;">
+                <!-- Center: Navigation -->
+                <nav style="display: flex; gap: 15px; align-items: center; justify-content: center;">
                     <a href="anticheat.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Игроки</a>
+                    <a href="secret-admins.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Админы</a>
                     <a href="check.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Проверка</a>
                     <a href="rules.html" style="background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">Правила</a>
                     <a href="tracking.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: 2px solid #667eea; color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">Отслеживание</a>
@@ -519,6 +553,21 @@
                         Fear Protection
                     </a>
                 </nav>
+                
+                <!-- Right: Profile -->
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="button" class="profile-button" id="profile-button" style="display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; color: white;">
+                        <div class="profile-info" style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span class="profile-name" id="profile-name" style="font-size: 13px; font-weight: 600; color: white;">Загрузка...</span>
+                            <span class="profile-role" id="profile-role" style="font-size: 11px; color: rgba(255, 255, 255, 0.5);">Админ</span>
+                        </div>
+                        <img src="https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg" 
+                             alt="Profile" 
+                             class="profile-avatar"
+                             id="profile-avatar"
+                             style="width: 36px; height: 36px; border-radius: 4px; border: 2px solid rgba(255, 255, 255, 0.1);">
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -573,7 +622,12 @@
     
 
     <!-- JavaScript -->
+    <script src="js/AntiDevTools.js?v=1"></script>
+    <script src="js/AuthManager.js?v=18"></script>
+    <script src="js/RoleAccessControl.js?v=5"></script>
+    <script src="js/ProfileDropdown.js?v=3"></script>
     <script src="js/NotificationSystem.js"></script>
+    <script src="js/PunishmentNormsWidget.js?v=1"></script>
     
     <script>
         // Tracking functionality
@@ -925,5 +979,6 @@
             console.log('[Tracking] Initialized successfully');
         });
     </script>
+    <script src="js/ButtonClickSound.js?v=1"></script>
 </body>
 </html>

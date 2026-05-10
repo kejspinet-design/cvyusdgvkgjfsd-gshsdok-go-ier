@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест кэша Discord профилей</title>
+    <style>
+        body {
+            background: #0f1419;
+            color: white;
+            font-family: monospace;
+            padding: 20px;
+        }
+        
+        .log {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .log-entry.success {
+            color: #22c55e;
+        }
+        
+        .log-entry.error {
+            color: #ef4444;
+        }
+        
+        .log-entry.info {
+            color: #667eea;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #667eea;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button.danger {
+            background: #ef4444;
+        }
+        
+        button.danger:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест системы кэширования Discord профилей</h1>
+    
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-label">Профилей в кэше</div>
+            <div class="stat-value" id="profiles-count">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Возраст кэша (часов)</div>
+            <div class="stat-value" id="cache-age">N/A</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Статус загрузки</div>
+            <div class="stat-value" id="loading-status" style="font-size: 14px;">⏳</div>
+        </div>
+    </div>
+    
+    <div class="buttons">
+        <button onclick="checkCache()">🔍 Проверить кэш</button>
+        <button onclick="clearCache()" class="danger">🗑️ Очистить кэш</button>
+        <button onclick="reloadPage()">🔄 Перезагрузить</button>
+    </div>
+    
+    <div class="log" id="log"></div>
+    
+    <script src="js/RoleAccessControl.js?v=4"></script>
+    <script src="js/BanGoalsNotifier.js?v=2"></script>
+    <script>
+        const logEl = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.insertBefore(entry, logEl.firstChild);
+        }
+        
+        function updateStats() {
+            const cachedProfiles = localStorage.getItem('discordProfilesCache');
+            const cacheTimestamp = localStorage.getItem('discordProfilesCacheTime');
+            
+            if (cachedProfiles) {
+                try {
+                    const profiles = JSON.parse(cachedProfiles);
+                    document.getElementById('profiles-count').textContent = profiles.length;
+                    addLog(`✓ Найдено ${profiles.length} профилей в localStorage`, 'success');
+                } catch (e) {
+                    document.getElementById('profiles-count').textContent = 'ERROR';
+                    addLog('✗ Ошибка парсинга кэша', 'error');
+                }
+            } else {
+                document.getElementById('profiles-count').textContent = '0';
+                addLog('⚠ Кэш пуст', 'info');
+            }
+            
+            if (cacheTimestamp) {
+                const age = Date.now() - parseInt(cacheTimestamp);
+                const hours = Math.round(age / (60 * 60 * 1000));
+                document.getElementById('cache-age').textContent = hours;
+                
+                if (hours >= 24) {
+                    addLog(`⚠ Кэш устарел (${hours} часов)`, 'error');
+                } else {
+                    addLog(`✓ Кэш свежий (${hours} часов)`, 'success');
+                }
+            } else {
+                document.getElementById('cache-age').textContent = 'N/A';
+            }
+        }
+        
+        function checkCache() {
+            addLog('🔍 Проверка кэша...', 'info');
+            updateStats();
+            
+            if (window.banGoalsNotifier) {
+                const cache = window.banGoalsNotifier.getDiscordProfilesCache();
+                addLog(`BanGoalsNotifier: isLoaded=${cache.isLoaded}, profiles=${cache.profiles.length}`, 'info');
+                
+                if (cache.isLoaded) {
+                    document.getElementById('loading-status').textContent = '✓';
+                    document.getElementById('loading-status').style.color = '#22c55e';
+                } else {
+                    document.getElementById('loading-status').textContent = '⏳';
+                    document.getElementById('loading-status').style.color = '#667eea';
+                }
+            } else {
+                addLog('⚠ BanGoalsNotifier не инициализирован', 'error');
+            }
+        }
+        
+        function clearCache() {
+            if (confirm('Вы уверены, что хотите очистить кэш?')) {
+                localStorage.removeItem('discordProfilesCache');
+                localStorage.removeItem('discordProfilesCacheTime');
+                localStorage.removeItem('discordProfilesCacheLoading');
+                addLog('🗑️ Кэш очищен', 'success');
+                updateStats();
+            }
+        }
+        
+        function reloadPage() {
+            location.reload();
+        }
+        
+        // Автоматическая проверка каждые 2 секунды
+        setInterval(() => {
+            if (window.banGoalsNotifier) {
+                const cache = window.banGoalsNotifier.getDiscordProfilesCache();
+                
+                if (cache.isLoaded) {
+                    document.getElementById('profiles-count').textContent = cache.profiles.length;
+                    document.getElementById('loading-status').textContent = '✓';
+                    document.getElementById('loading-status').style.color = '#22c55e';
+                }
+            }
+        }, 2000);
+        
+        // Перехватываем console.log для отображения в UI
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.join(' ');
+            if (message.includes('[Discord Cache]')) {
+                addLog(message, 'info');
+            }
+        };
+        
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const message = args.join(' ');
+            if (message.includes('[Discord Cache]')) {
+                addLog(message, 'error');
+            }
+        };
+        
+        // Начальная проверка
+        addLog('🚀 Тестовая страница загружена', 'success');
+        setTimeout(() => {
+            checkCache();
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,539 @@
+/**
+ * ULTRA-PREMIUM V2 - VIBRANT EDITION
+ * Enhanced billion-dollar design with vibrant colors
+ */
+
+/* ============================================
+   CSS VARIABLES - VIBRANT COLOR SYSTEM
+   ============================================ */
+:root {
+    /* Vibrant dark backgrounds */
+    --bg-primary: #0f0f1e;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #16213e;
+    --bg-elevated: #1f2937;
+    
+    /* Enhanced glass surfaces */
+    --glass-ultra-light: rgba(255, 255, 255, 0.08);
+    --glass-light: rgba(255, 255, 255, 0.12);
+    --glass-medium: rgba(255, 255, 255, 0.15);
+    --glass-strong: rgba(255, 255, 255, 0.20);
+    
+    /* Vibrant borders */
+    --border-subtle: rgba(167, 139, 250, 0.2);
+    --border-light: rgba(167, 139, 250, 0.3);
+    --border-medium: rgba(167, 139, 250, 0.4);
+    --border-strong: rgba(167, 139, 250, 0.6);
+    
+    /* Typography */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.85);
+    --text-tertiary: rgba(255, 255, 255, 0.65);
+    --text-muted: rgba(255, 255, 255, 0.45);
+    
+    /* Vibrant accents */
+    --accent-violet: #a78bfa;
+    --accent-blue: #22d3ee;
+    --accent-pink: #f472b6;
+    --accent-orange: #fb923c;
+    
+    /* Enhanced gradients */
+    --gradient-primary: linear-gradient(135deg, #a78bfa 0%, #22d3ee 100%);
+    --gradient-secondary: linear-gradient(135deg, #22d3ee 0%, #f472b6 100%);
+    --gradient-rainbow: linear-gradient(135deg, #a78bfa 0%, #22d3ee 50%, #f472b6 100%);
+    
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+    
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Blur */
+    --blur-sm: 12px;
+    --blur-md: 20px;
+    --blur-lg: 32px;
+    --blur-xl: 40px;
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif !important;
+    background: var(--bg-primary) !important;
+    background-image: 
+        radial-gradient(at 20% 30%, rgba(167, 139, 250, 0.15) 0%, transparent 50%),
+        radial-gradient(at 80% 70%, rgba(34, 211, 238, 0.15) 0%, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(244, 114, 182, 0.1) 0%, transparent 50%) !important;
+    color: var(--text-primary) !important;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Animated gradient overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(at 0% 0%, rgba(167, 139, 250, 0.3) 0%, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(34, 211, 238, 0.3) 0%, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(244, 114, 182, 0.2) 0%, transparent 50%);
+    opacity: 0.6;
+    z-index: 0;
+    pointer-events: none;
+    animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1) rotate(5deg);
+    }
+}
+
+/* Noise texture */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.02;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--glass-medium);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--bg-secondary);
+    transition: background var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-violet);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--glass-medium) var(--bg-secondary);
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+}
+
+h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700;
+}
+
+h2 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+h3 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+.container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* ============================================
+   HEADER/NAVBAR
+   ============================================ */
+.header, .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 1.5rem 2.5rem;
+    background: rgba(15, 15, 30, 0.8);
+    backdrop-filter: blur(var(--blur-xl));
+    -webkit-backdrop-filter: blur(var(--blur-xl));
+    border-bottom: 2px solid var(--border-subtle);
+    box-shadow: 0 4px 24px rgba(167, 139, 250, 0.1);
+}
+
+.header::before, .navbar::before {
+    display: none;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+nav a {
+    padding: 12px 24px;
+    background: var(--glass-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all var(--transition-base);
+    position: relative;
+    z-index: 10;
+}
+
+nav a:hover {
+    background: var(--glass-medium);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+}
+
+nav a[style*="linear-gradient"] {
+    background: var(--gradient-primary) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 0 30px rgba(167, 139, 250, 0.5);
+}
+
+/* ============================================
+   BUTTONS - VIBRANT
+   ============================================ */
+button, .btn {
+    padding: 14px 28px;
+    background: var(--glass-medium);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before, .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+button:hover::before, .btn:hover::before {
+    opacity: 1;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: 2px solid rgba(167, 139, 250, 0.5);
+    box-shadow: 0 0 30px rgba(167, 139, 250, 0.5), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 40px rgba(167, 139, 250, 0.7), 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-color: rgba(167, 139, 250, 0.8);
+}
+
+.btn-secondary {
+    background: var(--glass-medium);
+    border: 2px solid var(--border-medium);
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+}
+
+.btn-secondary:hover {
+    background: var(--glass-strong);
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(167, 139, 250, 0.4);
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 2px solid transparent;
+}
+
+.btn-ghost:hover {
+    background: var(--glass-light);
+    border-color: var(--border-light);
+}
+
+/* ============================================
+   CARDS - ENHANCED
+   ============================================ */
+.card, .glass {
+    background: var(--glass-medium);
+    backdrop-filter: blur(var(--blur-lg));
+    -webkit-backdrop-filter: blur(var(--blur-lg));
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-2xl);
+    padding: var(--space-xl);
+    transition: all var(--transition-slow);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.card::before, .glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    opacity: 0.7;
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+}
+
+.card:hover, .glass:hover {
+    background: var(--glass-strong);
+    border-color: var(--border-strong);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(167, 139, 250, 0.3), 0 0 60px rgba(167, 139, 250, 0.2);
+}
+
+.card:hover::after {
+    opacity: 1;
+}
+
+/* ============================================
+   INPUTS - VIBRANT
+   ============================================ */
+input, textarea, select {
+    width: 100%;
+    padding: 14px 18px;
+    background: var(--glass-light);
+    backdrop-filter: blur(var(--blur-sm));
+    -webkit-backdrop-filter: blur(var(--blur-sm));
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    transition: all var(--transition-base);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-muted);
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    background: var(--glass-medium);
+    border-color: var(--accent-violet);
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2), 0 0 30px rgba(167, 139, 250, 0.3);
+}
+
+input:hover:not(:focus), textarea:hover:not(:focus), select:hover:not(:focus) {
+    border-color: var(--border-medium);
+}
+
+/* ============================================
+   PROFILE BUTTON
+   ============================================ */
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--glass-medium);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    color: white;
+    position: relative;
+    z-index: 10;
+}
+
+.profile-button:hover {
+    background: var(--glass-strong);
+    border-color: var(--border-medium);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+main {
+    padding-top: 100px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.text-center {
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .header, .navbar {
+        padding: 1rem 1.5rem;
+    }
+    
+    nav a {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent-violet);
+    outline-offset: 2px;
+}

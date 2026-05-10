@@ -13,6 +13,9 @@ app.use((req, res, next) => {
     next();
 });
 
+// Parse JSON bodies
+app.use(express.json());
+
 // Serve main page with loading screen (BEFORE static middleware!)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -46,18 +49,93 @@ if (process.env.NODE_ENV !== 'production') {
         }
     }));
     
-    // Proxy for Fear Reports API
-    app.use('/api/reports', createProxyMiddleware({
+    // Proxy for Admins List API
+    app.use('/api/admins', createProxyMiddleware({
         target: 'https://api.fearproject.ru',
         changeOrigin: true,
         pathRewrite: {
-            '^/api/reports': '/reports/recent'
+            '^/api/admins': '/admins'
         },
         onProxyReq: (proxyReq, req, res) => {
-            // Add authentication cookies
-            const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiI3NjU2MTE5OTUyNDc4MDMyNyIsImlhdCI6MTc3NzgwNzMyNCwiZXhwIjoxNzgwMzk5MzI0fQ.PaLsOYuO-qx0AZcEG-5aQnjdNPUzD2zHFtqVxc4RmNo';
-            proxyReq.setHeader('Cookie', `access_token=${accessToken}; _ym_uid=1766660078200365881; _ym_d=1776260131; __ddg1_=faR8r5N1jJ3rGWxclyQR; __ddgid_=ZqbP2ZyzeZ2XMwTt; __ddgmark_=4RvtV5EigamE7TfU; _ym_isad=2; __ddg9_=104.28.229.14; _ym_visorc=w; __ddg10_=1777818152; __ddg8_=9pZgQJGSwSkScMhK`);
-            console.log(`Proxying reports request: ${req.method} ${req.url}`);
+            // Передаем токен через Cookie
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const actualToken = authHeader.replace('Bearer ', '');
+                proxyReq.setHeader('Cookie', `access_token=${actualToken}`);
+                console.log(`[Proxy] Admins request with token: ${actualToken.substring(0, 30)}...`);
+            }
+            console.log(`Proxying admins request: ${req.method} ${req.url}`);
+        },
+        onError: (err, req, res) => {
+            console.error('Admins proxy error:', err);
+            res.status(500).json({ error: 'Proxy error', message: err.message });
+        }
+    }));
+    
+    // Proxy for Fear Reports API (PATCH for closing tickets)
+    app.patch('/api/reports/:id/close', async (req, res) => {
+        try {
+            const token = req.headers.authorization;
+            if (!token) {
+                return res.status(401).json({ error: 'No authorization token' });
+            }
+
+            const ticketId = req.params.id;
+            const body = req.body;
+            
+            console.log('[Proxy] PATCH close ticket request:', ticketId, 'Body:', body);
+
+            const actualToken = token.replace('Bearer ', '');
+            
+            const response = await fetch(`https://api.fearproject.ru/reports/${ticketId}/close`, {
+                method: 'PATCH',
+                headers: {
+                    'Cookie': `access_token=${actualToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            console.log('[Proxy] PATCH close ticket response status:', response.status);
+            
+            let data;
+            try {
+                data = await response.json();
+                console.log('[Proxy] PATCH close ticket response data:', data);
+            } catch (e) {
+                const text = await response.text();
+                console.log('[Proxy] PATCH close ticket response text:', text);
+                data = { message: text };
+            }
+
+            res.status(response.status).json(data);
+        } catch (error) {
+            console.error('[Proxy] PATCH close ticket error:', error);
+            res.status(500).json({ error: 'Proxy error', message: error.message });
+        }
+    });
+    
+    // Proxy for Fear Reports API (GET requests)
+    app.use('/api/reports', createProxyMiddleware({
+        target: 'https://api.fearproject.ru',
+        changeOrigin: true,
+        pathRewrite: (path) => {
+            // Убираем только /api из начала пути, оставляем /reports/...
+            return path.replace('/api', '');
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            // Передаем токен через Cookie
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const actualToken = authHeader.replace('Bearer ', '');
+                proxyReq.setHeader('Cookie', `access_token=${actualToken}`);
+                console.log(`[Proxy] Reports request with token: ${actualToken.substring(0, 30)}...`);
+            }
+            console.log(`[Proxy] Reports request: ${req.method} ${req.url} -> ${proxyReq.path}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            console.log(`[Proxy] Reports response: ${proxyRes.statusCode}`);
         },
         onError: (err, req, res) => {
             console.error('Reports proxy error:', err);
@@ -81,12 +159,65 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 
     // Proxy for Fear Player API (profile/{steamid}) to get avatar and nickname
+    app.use('/api/player/search', createProxyMiddleware({
+        target: 'https://api.fearproject.ru',
+        changeOrigin: true,
+        pathRewrite: (path, req) => {
+            const discord = req.query.discord;
+            const query = req.query.query;
+            
+            if (discord) {
+                console.log('[Proxy] Player search by discord:', discord);
+                return `/profile/search?discord=${encodeURIComponent(discord)}`;
+            }
+            
+            if (query) {
+                console.log('[Proxy] Player search by query:', query);
+                return `/profile/search?query=${encodeURIComponent(query)}`;
+            }
+            
+            return '/profile/search';
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const actualToken = authHeader.replace('Bearer ', '');
+                proxyReq.setHeader('Cookie', `access_token=${actualToken}`);
+                console.log(`[Proxy] Player search with token: ${actualToken.substring(0, 20)}...`);
+            }
+            console.log(`[Proxy] Player search request: ${req.method} ${req.url} -> ${proxyReq.path}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            console.log(`[Proxy] Player search response: ${proxyRes.statusCode}`);
+        },
+        onError: (err, req, res) => {
+            console.error('Player search proxy error:', err);
+            res.status(500).json({ error: 'Proxy error', message: err.message });
+        }
+    }));
+    
+    // Proxy for Fear Player API (profile/{steamid}) to get avatar and nickname
     app.use('/api/player', createProxyMiddleware({
         target: 'https://api.fearproject.ru',
         changeOrigin: true,
         pathRewrite: (path, req) => {
             // Extract steamid from query parameters
             const steamid = req.query.steamid;
+            const mode = req.query.mode;
+            const discord = req.query.discord;
+            
+            // Если mode=auth, используем /profile/me для проверки токена
+            if (mode === 'auth' && steamid === 'me') {
+                console.log('[Proxy] Auth mode - using /profile/me');
+                return '/profile/me';
+            }
+            
+            // Если discord, используем /profile/{discord} напрямую
+            if (discord) {
+                console.log('[Proxy] Discord search mode - using /profile/' + discord);
+                return `/profile/${discord}`;
+            }
+            
             if (steamid) {
                 return `/profile/${steamid}`;
             }
@@ -94,10 +225,204 @@ if (process.env.NODE_ENV !== 'production') {
             return path.replace('/api/player', '/profile');
         },
         onProxyReq: (proxyReq, req, res) => {
-            console.log(`Proxying player request: ${req.method} ${req.url}`);
+            // Передаем Authorization заголовок если он есть
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const actualToken = authHeader.replace('Bearer ', '');
+                proxyReq.setHeader('Cookie', `access_token=${actualToken}`);
+                console.log(`[Proxy] Player request with token: ${actualToken.substring(0, 20)}...`);
+            }
+            console.log(`[Proxy] Player request: ${req.method} ${req.url} -> ${proxyReq.path}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            console.log(`[Proxy] Player response: ${proxyRes.statusCode}`);
         },
         onError: (err, req, res) => {
             console.error('Player proxy error:', err);
+            res.status(500).json({ error: 'Proxy error', message: err.message });
+        }
+    }));
+
+    // Proxy for Banner Images
+    app.use('/api/banner', createProxyMiddleware({
+        target: 'https://fearproject.ru',
+        changeOrigin: true,
+        pathRewrite: (path, req) => {
+            // Extract banner filename from query
+            const filename = req.query.file;
+            if (filename) {
+                // Try different paths
+                return `/uploads/banners/${filename}`;
+            }
+            return path.replace('/api/banner', '/uploads/banners');
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            console.log(`[Proxy] Banner request: ${req.method} ${req.url} -> ${proxyReq.path}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            console.log(`[Proxy] Banner response: ${proxyRes.statusCode}`);
+        },
+        onError: (err, req, res) => {
+            console.error('Banner proxy error:', err);
+            res.status(500).json({ error: 'Proxy error', message: err.message });
+        }
+    }));
+
+    // Proxy for Admin Ban API (POST) - MUST BE BEFORE GET middleware
+    app.post('/api/admin/punishments/ban', async (req, res) => {
+        try {
+            const token = req.headers.authorization;
+            if (!token) {
+                return res.status(401).json({ error: 'No authorization token' });
+            }
+
+            console.log('[Proxy] POST ban request:', req.body);
+
+            // Извлекаем токен из "Bearer <token>"
+            const actualToken = token.replace('Bearer ', '');
+            
+            // Декодируем токен чтобы показать кто делает запрос
+            try {
+                const payload = JSON.parse(Buffer.from(actualToken.split('.')[1], 'base64').toString());
+                console.log('[Proxy] POST ban - Request from Steam ID:', payload.client_id);
+                console.log('[Proxy] POST ban - Token preview:', actualToken.substring(0, 30) + '...');
+            } catch (e) {
+                console.log('[Proxy] POST ban - Could not decode token');
+            }
+
+            const response = await fetch('https://api.fearproject.ru/admin/punishments/ban', {
+                method: 'POST',
+                headers: {
+                    'Cookie': `access_token=${actualToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(req.body)
+            });
+
+            const data = await response.json();
+            console.log('[Proxy] POST ban response:', response.status, data);
+
+            res.status(response.status).json(data);
+        } catch (error) {
+            console.error('[Proxy] POST ban error:', error);
+            res.status(500).json({ error: 'Proxy error', message: error.message });
+        }
+    });
+
+    // Proxy for Admin Ban API (DELETE) - Remove punishment
+    app.delete('/api/admin/punishments/:id', async (req, res) => {
+        try {
+            const token = req.headers.authorization;
+            if (!token) {
+                return res.status(401).json({ error: 'No authorization token' });
+            }
+
+            const punishmentId = req.params.id;
+            console.log('[Proxy] DELETE punishment request:', punishmentId);
+
+            const actualToken = token.replace('Bearer ', '');
+            
+            // Декодируем токен
+            try {
+                const payload = JSON.parse(Buffer.from(actualToken.split('.')[1], 'base64').toString());
+                console.log('[Proxy] DELETE - Request from Steam ID:', payload.client_id);
+            } catch (e) {
+                console.log('[Proxy] DELETE - Could not decode token');
+            }
+
+            const response = await fetch(`https://api.fearproject.ru/admin/punishments/${punishmentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Cookie': `access_token=${actualToken}`,
+                    'Accept': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            console.log('[Proxy] DELETE punishment response:', response.status, data);
+
+            res.status(response.status).json(data);
+        } catch (error) {
+            console.error('[Proxy] DELETE punishment error:', error);
+            res.status(500).json({ error: 'Proxy error', message: error.message });
+        }
+    });
+
+    // Proxy for Admin Ban API (PATCH) - Update punishment
+    app.patch('/api/admin/punishments/:id', async (req, res) => {
+        try {
+            const token = req.headers.authorization;
+            if (!token) {
+                return res.status(401).json({ error: 'No authorization token' });
+            }
+
+            const punishmentId = req.params.id;
+            console.log('[Proxy] PATCH punishment request:', punishmentId, req.body);
+
+            const actualToken = token.replace('Bearer ', '');
+            
+            // Декодируем токен
+            try {
+                const payload = JSON.parse(Buffer.from(actualToken.split('.')[1], 'base64').toString());
+                console.log('[Proxy] PATCH - Request from Steam ID:', payload.client_id);
+            } catch (e) {
+                console.log('[Proxy] PATCH - Could not decode token');
+            }
+
+            const response = await fetch(`https://api.fearproject.ru/admin/punishments/${punishmentId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Cookie': `access_token=${actualToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(req.body)
+            });
+
+            const data = await response.json();
+            console.log('[Proxy] PATCH punishment response:', response.status, data);
+
+            res.status(response.status).json(data);
+        } catch (error) {
+            console.error('[Proxy] PATCH punishment error:', error);
+            res.status(500).json({ error: 'Proxy error', message: error.message });
+        }
+    });
+
+    // Proxy for Admin Punishments API (GET) - MUST BE AFTER POST endpoint
+    app.use('/api/admin/punishments', createProxyMiddleware({
+        target: 'https://api.fearproject.ru',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/api/admin/punishments': '/admin/punishments/my'
+        },
+        onProxyReq: (proxyReq, req, res) => {
+            // Передаем токен через Cookie
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const actualToken = authHeader.replace('Bearer ', '');
+                
+                // Декодируем токен чтобы показать для какого пользователя делается запрос
+                try {
+                    const payload = JSON.parse(Buffer.from(actualToken.split('.')[1], 'base64').toString());
+                    console.log(`[Proxy] Admin API GET - Request for Steam ID: ${payload.client_id}`);
+                    console.log(`[Proxy] Admin API GET - Token preview: ${actualToken.substring(0, 30)}...`);
+                } catch (e) {
+                    console.log(`[Proxy] Admin API GET - Could not decode token`);
+                }
+                
+                proxyReq.setHeader('Cookie', `access_token=${actualToken}`);
+            } else {
+                console.log(`[Proxy] Admin API GET - No Authorization header!`);
+            }
+            console.log(`[Proxy] Admin punishments request: ${req.method} ${req.url} -> ${proxyReq.path}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            console.log(`[Proxy] Admin punishments response: ${proxyRes.statusCode}`);
+        },
+        onError: (err, req, res) => {
+            console.error('Admin punishments proxy error:', err);
             res.status(500).json({ error: 'Proxy error', message: err.message });
         }
     }));

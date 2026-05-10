@@ -404,11 +404,17 @@ class AntiCheatPage {
      */
     showEmpty(message) {
         this.playersList.innerHTML = `
-            <div style="text-align: center; padding: 60px 20px;">
-                <div style="font-size: 64px; margin-bottom: 20px;">😴</div>
-                <p style="color: white; font-size: 24px; margin-bottom: 10px;">Пусто</p>
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 18px;">${message}</p>
+            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1000;">
+                <div style="font-size: 80px; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">😴</div>
+                <p style="color: white; font-size: 28px; font-weight: 700; margin-bottom: 10px;">Пусто</p>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 16px;">${message}</p>
             </div>
+            <style>
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px); }
+                    50% { transform: translateY(-10px); }
+                }
+            </style>
         `;
     }
 

@@ -47,14 +47,20 @@ class ConfigChecker {
             e.target.value = '';
         });
         
-        // Click to open file dialog
+        // Click to open file dialog - DISABLED, using button instead
+        /*
         this.uploadArea.addEventListener('click', (e) => {
+            // Don't trigger if clicking on the button or label itself
+            if (e.target.tagName === 'BUTTON' || e.target.tagName === 'LABEL' || e.target.closest('button') || e.target.closest('label')) {
+                return;
+            }
             e.preventDefault();
             e.stopPropagation();
             if (!this.isProcessing) {
                 this.fileInput.click();
             }
         });
+        */
         
         // Drag and drop events
         this.uploadArea.addEventListener('dragover', (e) => {
@@ -413,7 +419,11 @@ class ConfigChecker {
         resetButton.className = 'upload-button';
         resetButton.textContent = 'Проверить другой файл';
         resetButton.style.marginTop = '20px';
+        resetButton.style.marginBottom = '20px';
         resetButton.style.alignSelf = 'center';
+        resetButton.style.width = 'auto';
+        resetButton.style.maxWidth = '300px';
+        resetButton.style.padding = '12px 30px';
         resetButton.onclick = () => this.showUploadArea();
         
         this.resultsColumn.appendChild(resetButton);

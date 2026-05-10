@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear Protection - Тест доступа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0f1419;
+            color: white;
+            font-family: 'Courier New', monospace;
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background: #1a1f2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #22c55e;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .label {
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 150px;
+        }
+        
+        .value {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .button {
+            background: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        
+        .button:hover {
+            background: #5568d3;
+        }
+        
+        .success {
+            color: #22c55e;
+        }
+        
+        .error {
+            color: #ef4444;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
+        pre {
+            margin: 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Fear Protection - Тест полного доступа</h1>
+        
+        <div class="section">
+            <div class="section-title">Информация о токене</div>
+            <div class="info-row">
+                <span class="label">Steam ID:</span>
+                <span class="value" id="steam-id">Загрузка...</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Токен установлен:</span>
+                <span class="value" id="token-status">Проверка...</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Срок действия:</span>
+                <span class="value" id="token-expiry">Проверка...</span>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Профиль пользователя</div>
+            <div id="profile-info">Загрузка...</div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Тесты API</div>
+            <button class="button" onclick="testAPI('/api/player?steamid=76561199524780327')">Тест: Профиль</button>
+            <button class="button" onclick="testAPI('/api/admins')">Тест: Список админов</button>
+            <button class="button" onclick="testAPI('/api/admin/punishments?type=0')">Тест: Баны</button>
+            <button class="button" onclick="testAPI('/api/reports')">Тест: Тикеты</button>
+            <div id="api-result" class="code-block" style="display: none;">
+                <pre id="api-output"></pre>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Действия</div>
+            <button class="button" onclick="setToken()">Установить токен</button>
+            <button class="button" onclick="clearToken()">Очистить токен</button>
+            <button class="button" onclick="goToAdminPanel()">Перейти в админ-панель</button>
+        </div>
+    </div>
+    
+    <script>
+        // Токен для Steam ID: 76561199524780327 (главный админ)
+        const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiI3NjU2MTE5OTUyNDc4MDMyNyIsImlhdCI6MTc0NjYzMzYwMCwiZXhwIjoxNzc4MTY5NjAwfQ.main_admin_token";
+        
+        function setToken() {
+            localStorage.setItem('fearToken', TOKEN);
+            console.log('[Access Test] Token set successfully');
+            alert('✓ Токен установлен! Теперь у вас есть полный доступ.');
+            location.reload();
+        }
+        
+        function clearToken() {
+            localStorage.removeItem('fearToken');
+            console.log('[Access Test] Token cleared');
+            alert('✓ Токен удалён');
+            location.reload();
+        }
+        
+        function goToAdminPanel() {
+            window.location.href = 'admin-panel.html';
+        }
+        
+        async function testAPI(endpoint) {
+            const token = localStorage.getItem('fearToken');
+            if (!token) {
+                alert('❌ Токен не установлен! Нажмите "Установить токен"');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('api-result');
+            const outputPre = document.getElementById('api-output');
+            
+            resultDiv.style.display = 'block';
+            outputPre.textContent = 'Загрузка...';
+            
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                outputPre.textContent = JSON.stringify({
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, null, 2);
+                
+                console.log('[API Test]', endpoint, response.status, data);
+            } catch (error) {
+                outputPre.textContent = `Ошибка: ${error.message}`;
+                console.error('[API Test] Error:', error);
+            }
+        }
+        
+        async function loadTokenInfo() {
+            const token = localStorage.getItem('fearToken');
+            
+            if (!token) {
+                document.getElementById('steam-id').innerHTML = '<span class="error">Токен не установлен</span>';
+                document.getElementById('token-status').innerHTML = '<span class="error">❌ Не установлен</span>';
+                document.getElementById('token-expiry').innerHTML = '<span class="error">N/A</span>';
+                return;
+            }
+            
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const steamId = payload.client_id;
+                const expiry = new Date(payload.exp * 1000);
+                const now = new Date();
+                const isExpired = now > expiry;
+                
+                document.getElementById('steam-id').innerHTML = `<span class="success">${steamId}</span>`;
+                document.getElementById('token-status').innerHTML = '<span class="success">✓ Установлен</span>';
+                
+                if (isExpired) {
+                    document.getElementById('token-expiry').innerHTML = `<span class="error">❌ Истёк: ${expiry.toLocaleString('ru-RU')}</span>`;
+                } else {
+                    document.getElementById('token-expiry').innerHTML = `<span class="success">✓ Действителен до: ${expiry.toLocaleString('ru-RU')}</span>`;
+                }
+                
+                // Загружаем профиль
+                await loadProfile(steamId);
+                
+            } catch (error) {
+                console.error('[Token Info] Error:', error);
+                document.getElementById('steam-id').innerHTML = '<span class="error">Ошибка декодирования</span>';
+            }
+        }
+        
+        async function loadProfile(steamId) {
+            const profileDiv = document.getElementById('profile-info');
+            
+            try {
+                const response = await fetch(`/api/player?steamid=${steamId}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    profileDiv.innerHTML = `<span class="error">Ошибка загрузки профиля: ${response.status}</span>`;
+                    return;
+                }
+                
+                const profile = await response.json();
+                
+                profileDiv.innerHTML = `
+                    <div class="info-row">
+                        <span class="label">Имя:</span>
+                        <span class="value">${profile.name || 'N/A'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Роль:</span>
+                        <span class="value">${profile.adminGroup?.group_name || profile.role || 'N/A'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Иммунитет:</span>
+                        <span class="value">${profile.immunity || 'N/A'}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Аватар:</span>
+                        <span class="value"><img src="${profile.avatar || 'N/A'}" style="width: 64px; height: 64px; border-radius: 4px;"></span>
+                    </div>
+                `;
+                
+                console.log('[Profile] Loaded:', profile);
+                
+            } catch (error) {
+                console.error('[Profile] Error:', error);
+                profileDiv.innerHTML = `<span class="error">Ошибка: ${error.message}</span>`;
+            }
+        }
+        
+        // Загружаем информацию при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTokenInfo();
+        });
+    </script>
+</body>
+</html>
