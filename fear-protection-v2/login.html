@@ -566,17 +566,6 @@
             }
         });
         
-        // Проверяем, есть ли уже токен
-        const savedToken = localStorage.getItem('fearToken');
-        if (savedToken) {
-            // Проверяем валидность токена
-            validateToken(savedToken).then(isValid => {
-                if (isValid) {
-                    window.location.href = 'anticheat.html';
-                }
-            });
-        }
-        
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
