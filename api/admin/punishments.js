@@ -16,12 +16,17 @@ export default async function handler(req, res) {
     }
     
     try {
-        const token = req.headers.authorization;
+        const authHeader = req.headers.authorization;
         
-        if (!token) {
+        if (!authHeader) {
             res.status(401).json({ error: 'Missing authorization token' });
             return;
         }
+        
+        // Extract token (remove "Bearer " prefix if present)
+        const token = authHeader.startsWith('Bearer ') 
+            ? authHeader.substring(7) 
+            : authHeader;
         
         let fearApiUrl;
         let method = req.method;
@@ -60,7 +65,7 @@ export default async function handler(req, res) {
             method,
             headers: {
                 'Accept': 'application/json',
-                'Authorization': token,
+                'Authorization': `Bearer ${token}`,
                 'User-Agent': 'Fear-Protection/1.0'
             },
             signal: controller.signal
