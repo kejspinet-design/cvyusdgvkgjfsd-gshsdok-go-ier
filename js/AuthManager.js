@@ -171,20 +171,10 @@ class AuthManager {
      * Логирование в фоне (не блокирует загрузку)
      */
     logAuthInBackground(data, token) {
-        // Проверяем, логировали ли мы уже сегодня
-        const lastLogDate = localStorage.getItem('lastAuthLogDate');
-        const today = new Date().toDateString();
-        
-        if (lastLogDate === today) {
-            console.log('[AuthManager] Already logged today, skipping');
-            return;
-        }
-        
-        // Логируем только один раз в день
+        // Логируем каждый вход на сайт
         setTimeout(() => {
             this.logAuthToGoogleSheets(data, token).then(() => {
-                // Сохраняем дату последнего логирования
-                localStorage.setItem('lastAuthLogDate', today);
+                console.log('[AuthManager] ✅ Login logged to Google Sheets');
             }).catch(err => {
                 console.warn('[AuthManager] Failed to log to Google Sheets:', err);
             });
