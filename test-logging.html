@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Logging</title>
+    <style>
+        body {
+            background: #1a1d29;
+            color: white;
+            font-family: monospace;
+            padding: 20px;
+        }
+        
+        .log {
+            background: #2a2d39;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Google Sheets Logging</h1>
+    
+    <button onclick="testLogging()">Test Logging</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+    <button onclick="checkLastLog()">Check Last Log Date</button>
+    <button onclick="resetLogDate()">Reset Log Date</button>
+    
+    <div id="logs"></div>
+    
+    <script>
+        const GOOGLE_SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzeLXN5jF_s54GpSDmTDU5WC7nTmE1r8k492pDFTkPnDa4BYLOa4XrubTICDN1tT1Uo/exec';
+        
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log';
+            logEntry.style.borderLeftColor = type === 'error' ? '#ef4444' : type === 'success' ? '#22c55e' : '#667eea';
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.insertBefore(logEntry, logsDiv.firstChild);
+            console.log(message);
+        }
+        
+        async function testLogging() {
+            log('Starting test logging...');
+            
+            try {
+                const profile = JSON.parse(localStorage.getItem('fearProfile') || '{}');
+                const token = localStorage.getItem('fearToken');
+                
+                if (!profile.steamid) {
+                    log('No profile found in localStorage', 'error');
+                    return;
+                }
+                
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    steamId: profile.steamid,
+                    nickname: profile.name || 'Unknown',
+                    role: profile.adminGroup?.group_display_name || 'Unknown',
+                    token: token,
+                    isMainAdmin: profile.steamid === '76561199524780327',
+                    testMode: true
+                };
+                
+                log('Sending data: ' + JSON.stringify(data, null, 2));
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(GOOGLE_SHEETS_WEBHOOK, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                log('Request sent successfully (no-cors mode - cannot read response)', 'success');
+                log('Check Google Sheets to verify data was received', 'success');
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    log('Request timeout after 5 seconds', 'error');
+                } else {
+                    log('Error: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        function checkLastLog() {
+            const lastLogDate = localStorage.getItem('lastAuthLogDate');
+            if (lastLogDate) {
+                log('Last log date: ' + lastLogDate);
+            } else {
+                log('No log date found');
+            }
+        }
+        
+        function resetLogDate() {
+            localStorage.removeItem('lastAuthLogDate');
+            log('Log date reset - next auth will trigger logging', 'success');
+        }
+    </script>
+</body>
+</html>
